@@ -6,24 +6,24 @@
         "comment": "",
         "key": "Pause",
         "location": {
-          "startingColumn": 42,
-          "startingLine": 21
+          "startingColumn": 50,
+          "startingLine": 27
         }
       },
       {
         "comment": "",
         "key": "Start",
         "location": {
-          "startingColumn": 52,
-          "startingLine": 21
+          "startingColumn": 60,
+          "startingLine": 27
         }
       },
       {
         "comment": "",
         "key": "Reset",
         "location": {
-          "startingColumn": 24,
-          "startingLine": 30
+          "startingColumn": 32,
+          "startingLine": 36
         }
       }
     ]

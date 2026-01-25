@@ -5,6 +5,49 @@
 	<key>logFormatVersion</key>
 	<integer>12</integer>
 	<key>logs</key>
-	<dict/>
+	<dict>
+		<key>049AA1E4-DC41-4898-A290-755DD2446801</key>
+		<dict>
+			<key>className</key>
+			<string>IDECommandLineBuildLog</string>
+			<key>documentTypeString</key>
+			<string>&lt;nil&gt;</string>
+			<key>domainType</key>
+			<string>Xcode.IDEActivityLogDomainType.BuildLog</string>
+			<key>fileName</key>
+			<string>049AA1E4-DC41-4898-A290-755DD2446801.xcactivitylog</string>
+			<key>hasPrimaryLog</key>
+			<true/>
+			<key>primaryObservable</key>
+			<dict>
+				<key>highLevelStatus</key>
+				<string>S</string>
+				<key>totalNumberOfAnalyzerIssues</key>
+				<integer>0</integer>
+				<key>totalNumberOfErrors</key>
+				<integer>0</integer>
+				<key>totalNumberOfTestFailures</key>
+				<integer>0</integer>
+				<key>totalNumberOfWarnings</key>
+				<integer>0</integer>
+			</dict>
+			<key>schemeIdentifier-containerName</key>
+			<string>pomodoro project</string>
+			<key>schemeIdentifier-schemeName</key>
+			<string>pomodoro</string>
+			<key>schemeIdentifier-sharedScheme</key>
+			<integer>1</integer>
+			<key>signature</key>
+			<string>Building project pomodoro with scheme pomodoro</string>
+			<key>timeStartedRecording</key>
+			<real>791076490.03069603</real>
+			<key>timeStoppedRecording</key>
+			<real>791076501.18247402</real>
+			<key>title</key>
+			<string>Building project pomodoro with scheme pomodoro</string>
+			<key>uniqueIdentifier</key>
+			<string>049AA1E4-DC41-4898-A290-755DD2446801</string>
+		</dict>
+	</dict>
 </dict>
 </plist>

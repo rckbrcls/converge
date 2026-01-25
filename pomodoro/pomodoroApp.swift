@@ -11,6 +11,12 @@ import SwiftUI
 struct pomodoroApp: App {
     @StateObject private var pomodoroTimer = PomodoroTimer()
 
+    init() {
+        Task {
+            await NotificationManager.shared.requestAuthorization()
+        }
+    }
+
     var body: some Scene {
         WindowGroup {
             PomodoroView()

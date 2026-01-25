@@ -76,6 +76,7 @@ final class PomodoroTimer: ObservableObject {
     private func advanceToNextPhase() {
         switch phase {
         case .work:
+            NotificationManager.shared.sendWorkCompleteNotification()
             phase = .break
             remainingSeconds = Self.breakDurationSeconds
         case .break:
