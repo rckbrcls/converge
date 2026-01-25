@@ -1,0 +1,32 @@
+{
+  "source": "/Users/erickpatrickbarcelos/codes/pomodoro/pomodoro/PomodoroView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Pause",
+        "location": {
+          "startingColumn": 42,
+          "startingLine": 21
+        }
+      },
+      {
+        "comment": "",
+        "key": "Start",
+        "location": {
+          "startingColumn": 52,
+          "startingLine": 21
+        }
+      },
+      {
+        "comment": "",
+        "key": "Reset",
+        "location": {
+          "startingColumn": 24,
+          "startingLine": 30
+        }
+      }
+    ]
+  },
+  "version": 1
+}
