@@ -14,23 +14,48 @@ enum PomodoroPhase: String {
 
 @MainActor
 final class PomodoroTimer: ObservableObject {
-    static let workDurationSeconds = 25 * 60
-    static let breakDurationSeconds = 5 * 60
-
+    @Published var settings: PomodoroSettings
+    
     @Published private(set) var remainingSeconds: Int
     @Published private(set) var isRunning: Bool = false
     @Published private(set) var phase: PomodoroPhase = .idle
+    @Published private(set) var completedPomodoros: Int = 0
+    
+    private var currentPhaseTotalSeconds: Int = 0
 
     private var timerCancellable: AnyCancellable?
+    private var settingsCancellable: AnyCancellable?
 
     var formattedTime: String {
         let m = remainingSeconds / 60
         let s = remainingSeconds % 60
         return String(format: "%02d:%02d", m, s)
     }
+    
+    var progress: Double {
+        guard currentPhaseTotalSeconds > 0 else { return 0.0 }
+        let elapsed = currentPhaseTotalSeconds - remainingSeconds
+        return max(0.0, min(1.0, Double(elapsed) / Double(currentPhaseTotalSeconds)))
+    }
 
-    init() {
-        self.remainingSeconds = Self.workDurationSeconds
+    init(settings: PomodoroSettings) {
+        self.settings = settings
+        self.remainingSeconds = settings.workDurationSeconds
+        self.currentPhaseTotalSeconds = settings.workDurationSeconds
+        
+        // Observe changes in settings to update timer if needed
+        settingsCancellable = settings.objectWillChange.sink { [weak self] _ in
+            Task { @MainActor in
+                self?.updateTimerFromSettings()
+            }
+        }
+    }
+    
+    private func updateTimerFromSettings() {
+        // Only update if timer is not running and in idle state
+        guard !isRunning, phase == .idle else { return }
+        remainingSeconds = settings.workDurationSeconds
+        currentPhaseTotalSeconds = settings.workDurationSeconds
     }
 
     func start() {
@@ -39,7 +64,8 @@ final class PomodoroTimer: ObservableObject {
 
         if phase == .idle {
             phase = .work
-            remainingSeconds = Self.workDurationSeconds
+            remainingSeconds = settings.workDurationSeconds
+            currentPhaseTotalSeconds = settings.workDurationSeconds
         }
 
         timerCancellable = Timer.publish(every: 1, on: .main, in: .common)
@@ -61,7 +87,9 @@ final class PomodoroTimer: ObservableObject {
     func reset() {
         pause()
         phase = .idle
-        remainingSeconds = Self.workDurationSeconds
+        remainingSeconds = settings.workDurationSeconds
+        currentPhaseTotalSeconds = settings.workDurationSeconds
+        completedPomodoros = 0
     }
 
     private func tick() {
@@ -77,14 +105,30 @@ final class PomodoroTimer: ObservableObject {
         switch phase {
         case .work:
             NotificationManager.shared.sendWorkCompleteNotification()
+            StatisticsStore.shared.recordCompletedPomodoro(durationSeconds: settings.workDurationSeconds)
+            completedPomodoros += 1
+            
+            // Determine if it's time for a long break
+            let isLongBreak = completedPomodoros % settings.pomodorosUntilLongBreak == 0
             phase = .break
-            remainingSeconds = Self.breakDurationSeconds
+            
+            if isLongBreak {
+                remainingSeconds = settings.longBreakDurationSeconds
+                currentPhaseTotalSeconds = settings.longBreakDurationSeconds
+            } else {
+                remainingSeconds = settings.shortBreakDurationSeconds
+                currentPhaseTotalSeconds = settings.shortBreakDurationSeconds
+            }
+            
         case .break:
+            NotificationManager.shared.sendBreakCompleteNotification()
             phase = .work
-            remainingSeconds = Self.workDurationSeconds
+            remainingSeconds = settings.workDurationSeconds
+            currentPhaseTotalSeconds = settings.workDurationSeconds
         case .idle:
             phase = .work
-            remainingSeconds = Self.workDurationSeconds
+            remainingSeconds = settings.workDurationSeconds
+            currentPhaseTotalSeconds = settings.workDurationSeconds
         }
     }
 }

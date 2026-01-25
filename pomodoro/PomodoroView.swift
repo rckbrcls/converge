@@ -7,34 +7,90 @@ import SwiftUI
 
 struct PomodoroView: View {
     @EnvironmentObject private var timer: PomodoroTimer
+    @EnvironmentObject private var themeSettings: ThemeSettings
+    @Environment(\.colorScheme) private var systemColorScheme
+    @State private var showSettings = false
 
     var body: some View {
-        VStack(spacing: 20) {
-            Text(timer.formattedTime)
-                .font(.system(size: 44, weight: .medium, design: .monospaced))
+        NavigationStack {
+            ZStack {
+                phaseColors.background
+                    .ignoresSafeArea()
+                    .animation(.easeInOut(duration: 0.5), value: timer.phase)
+                
+                VStack(spacing: 20) {
+                    ZStack {
+                        CircularProgressView(
+                            progress: timer.progress,
+                            lineWidth: 10,
+                            color: phaseColors.primary
+                        )
+                        .frame(width: 220, height: 220)
+                        .animation(.easeInOut(duration: 0.3), value: timer.progress)
+                        
+                        VStack(spacing: 4) {
+                            Text(timer.formattedTime)
+                                .font(.system(size: 48, weight: .medium, design: .monospaced))
+                                .foregroundColor(phaseColors.primary)
+                                .animation(.easeInOut(duration: 0.3), value: timer.phase)
+                        }
+                    }
+                    .transition(.scale.combined(with: .opacity))
+                    
+                    Text(phaseLabel)
+                        .font(.headline)
+                        .foregroundColor(phaseColors.secondary)
+                        .animation(.easeInOut(duration: 0.3), value: timer.phase)
+                    
+                    if timer.completedPomodoros > 0 {
+                        Text("Completed: \(timer.completedPomodoros)")
+                            .font(.subheadline)
+                            .foregroundColor(phaseColors.secondary.opacity(0.7))
+                            .transition(.opacity)
+                    }
 
-            Text(phaseLabel)
-                .font(.headline)
-                .foregroundStyle(.secondary)
+                    HStack(spacing: 12) {
+                        Button(timer.isRunning ? "Pause" : "Start") {
+                            withAnimation(.easeInOut(duration: 0.2)) {
+                                if timer.isRunning {
+                                    timer.pause()
+                                } else {
+                                    timer.start()
+                                }
+                            }
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .tint(phaseColors.accent)
+                        .animation(.easeInOut(duration: 0.3), value: timer.phase)
 
-            HStack(spacing: 12) {
-                Button(timer.isRunning ? "Pause" : "Start") {
-                    if timer.isRunning {
-                        timer.pause()
-                    } else {
-                        timer.start()
+                        Button("Reset") {
+                            withAnimation(.easeInOut(duration: 0.2)) {
+                                timer.reset()
+                            }
+                        }
+                        .buttonStyle(.bordered)
+                        .foregroundColor(phaseColors.primary)
+                        .animation(.easeInOut(duration: 0.3), value: timer.phase)
                     }
                 }
-                .buttonStyle(.borderedProminent)
-
-                Button("Reset") {
-                    timer.reset()
+                .padding(32)
+            }
+            .toolbar {
+                ToolbarItem(placement: .automatic) {
+                    Button {
+                        showSettings = true
+                    } label: {
+                        Image(systemName: "gearshape")
+                            .foregroundColor(phaseColors.primary)
+                    }
                 }
-                .buttonStyle(.bordered)
+            }
+            .sheet(isPresented: $showSettings) {
+                NavigationStack {
+                    SettingsView()
+                }
             }
         }
-        .padding(24)
-        .background(.ultraThinMaterial)
     }
 
     private var phaseLabel: String {
@@ -44,11 +100,21 @@ struct PomodoroView: View {
         case .break: return "Break"
         }
     }
+    
+    private var effectiveColorScheme: ColorScheme {
+        themeSettings.currentColorScheme ?? systemColorScheme
+    }
+    
+    private var phaseColors: PhaseColors {
+        PhaseColors.color(for: timer.phase, colorScheme: effectiveColorScheme)
+    }
 }
 
 struct PomodoroView_Previews: PreviewProvider {
     static var previews: some View {
+        let settings = PomodoroSettings()
         PomodoroView()
-            .environmentObject(PomodoroTimer())
+            .environmentObject(PomodoroTimer(settings: settings))
+            .environmentObject(settings)
     }
 }
