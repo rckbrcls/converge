@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Download } from "lucide-react";
+import { Download, Github } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion } from "motion/react";
 import { useEffect, useState } from "react";
@@ -95,42 +95,56 @@ export function DownloadSection() {
           </span>
         )}
       </motion.p>
-      {downloadUrl ? (
+      <motion.div
+        variants={{
+          hidden: { opacity: 0, scale: 0.95 },
+          visible: { opacity: 1, scale: 1 },
+        }}
+        transition={{ duration: 0.5, ease: "easeOut", delay: 0.4 }}
+        className="flex flex-col gap-4 sm:flex-row sm:gap-3 sm:items-center sm:justify-center"
+      >
+        {downloadUrl ? (
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <Button asChild size="lg">
+              <a
+                href={downloadUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2"
+              >
+                <Download className="size-4" />
+                Download Converge (DMG)
+              </a>
+            </Button>
+          </motion.div>
+        ) : (
+          <motion.div>
+            <Button size="lg" disabled={isLoading}>
+              <Download className="size-4" />
+              {isLoading ? "Checking for updates..." : "Download coming soon"}
+            </Button>
+          </motion.div>
+        )}
         <motion.div
-          variants={{
-            hidden: { opacity: 0, scale: 0.95 },
-            visible: { opacity: 1, scale: 1 },
-          }}
-          transition={{ duration: 0.5, ease: "easeOut", delay: 0.4 }}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
         >
-          <Button asChild size="lg">
+          <Button asChild size="lg" variant="outline">
             <a
-              href={downloadUrl}
+              href="https://github.com/rckbrcls/converge"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2"
             >
-              <Download className="size-4" />
-              Download Converge (DMG)
+              <Github className="size-4" />
+              GitHub
             </a>
           </Button>
         </motion.div>
-      ) : (
-        <motion.div
-          variants={{
-            hidden: { opacity: 0, scale: 0.95 },
-            visible: { opacity: 1, scale: 1 },
-          }}
-          transition={{ duration: 0.5, ease: "easeOut", delay: 0.4 }}
-        >
-          <Button size="lg" disabled={isLoading}>
-            <Download className="size-4" />
-            {isLoading ? "Checking for updates..." : "Download coming soon"}
-          </Button>
-        </motion.div>
-      )}
+      </motion.div>
       <motion.footer
         variants={{
           hidden: { opacity: 0, y: 20 },
