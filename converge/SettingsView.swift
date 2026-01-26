@@ -12,6 +12,7 @@ struct SettingsView: View {
     
     @State private var showResetFeedback = false
     @State private var showClearConfirmation = false
+    @State private var showResetConfirmation = false
     
     var body: some View {
         Form {
@@ -89,7 +90,7 @@ struct SettingsView: View {
             Section {
                 HStack(spacing: 12) {
                     Button {
-                        resetToDefaults()
+                        showResetConfirmation = true
                     } label: {
                         HStack {
                             Image(systemName: "arrow.counterclockwise")
@@ -122,6 +123,14 @@ struct SettingsView: View {
             }
         } message: {
             Text("This will permanently delete all session history and statistics. This action cannot be undone.")
+        }
+        .alert("Reset to Defaults", isPresented: $showResetConfirmation) {
+            Button("Cancel", role: .cancel) { }
+            Button("Reset", role: .destructive) {
+                resetToDefaults()
+            }
+        } message: {
+            Text("This will reset all settings to their default values. This action cannot be undone.")
         }
         .overlay {
             VStack(spacing: 8) {
