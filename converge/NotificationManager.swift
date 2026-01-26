@@ -29,8 +29,8 @@ final class NotificationManager {
     
     func sendWorkCompleteNotification() {
         let content = UNMutableNotificationContent()
-        content.title = "Pomodoro Completo!"
-        content.body = "Os 25 minutos de trabalho terminaram. Hora de fazer uma pausa!"
+        content.title = "Pomodoro Complete!"
+        content.body = "The 25 minutes of work are finished. Time for a break!"
         content.sound = getNotificationSound()
         
         sendNotification(content: content)
@@ -38,8 +38,8 @@ final class NotificationManager {
     
     func sendBreakCompleteNotification() {
         let content = UNMutableNotificationContent()
-        content.title = "Pausa Terminada!"
-        content.body = "A pausa terminou. Hora de voltar ao trabalho!"
+        content.title = "Break Complete!"
+        content.body = "The break is over. Time to get back to work!"
         content.sound = getNotificationSound()
         
         sendNotification(content: content)
