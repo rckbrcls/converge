@@ -87,7 +87,7 @@ struct SettingsView: View {
 
             NotificationSettingsSection()
 
-            Section {
+            Section("Destructive Actions"){
                 HStack(spacing: 12) {
                     Button {
                         showResetConfirmation = true
