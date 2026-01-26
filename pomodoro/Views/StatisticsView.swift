@@ -8,16 +8,37 @@ import Charts
 
 struct StatisticsView: View {
     @EnvironmentObject private var store: StatisticsStore
+    @State private var showSettings = false
 
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 24) {
-                countersSection
-                chartSection
+        NavigationStack {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 24) {
+                    countersSection
+                    chartSection
+                }
+                .padding(24)
             }
-            .padding(24)
+            .background(.ultraThinMaterial)
+            .clipShape(RoundedRectangle(cornerRadius: 24))
+            .navigationTitle("Statistics")
+            .toolbar {
+                ToolbarItem(placement: .automatic) {
+                    Button {
+                        showSettings = true
+                    } label: {
+                        Label("Settings", systemImage: "gearshape")
+                            .labelStyle(.titleAndIcon)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+            }
+            .sheet(isPresented: $showSettings) {
+                NavigationStack {
+                    SettingsView()
+                }
+            }
         }
-        .background(.ultraThinMaterial)
     }
 
     private var countersSection: some View {
@@ -62,6 +83,12 @@ private struct StatCounter: View {
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
         }
+        .padding()
+        .frame(maxWidth: .infinity)
+        .background(
+            RoundedRectangle(cornerRadius: 24)
+                .fill(.ultraThinMaterial)
+        )
     }
 }
 
@@ -69,5 +96,7 @@ private struct StatCounter: View {
 #Preview {
     StatisticsView()
         .environmentObject(StatisticsStore.shared)
+        .environmentObject(PomodoroSettings())
+        .environmentObject(ThemeSettings())
 }
 #endif

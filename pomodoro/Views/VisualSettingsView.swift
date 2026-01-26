@@ -14,7 +14,7 @@ struct VisualSettingsView: View {
             Section("Theme") {
                 Picker("Appearance", selection: $themeSettings.selectedTheme) {
                     ForEach(AppTheme.allCases, id: \.self) { theme in
-                        Label(theme.displayName, systemImage: theme.systemImage).tag(theme)
+                        Text(theme.displayName).tag(theme)
                     }
                 }
                 .pickerStyle(.segmented)

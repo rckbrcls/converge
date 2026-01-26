@@ -7,6 +7,7 @@ import SwiftUI
 
 struct SessionHistoryView: View {
     @EnvironmentObject private var store: StatisticsStore
+    @State private var showSettings = false
 
     private static let dateFormatter: DateFormatter = {
         let f = DateFormatter()
@@ -17,34 +18,57 @@ struct SessionHistoryView: View {
 
     var body: some View {
         let sessions = store.recentSessions(limit: 50)
-        
-        if sessions.isEmpty {
-            VStack(spacing: 16) {
-                Image(systemName: "clock.badge.questionmark")
-                    .font(.system(size: 48))
-                    .foregroundStyle(.secondary)
-                Text("No sessions yet")
-                    .font(.headline)
-                    .foregroundStyle(.primary)
-                Text("Complete a pomodoro session to see it here")
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-                    .multilineTextAlignment(.center)
+
+        NavigationStack {
+            Group {
+                if sessions.isEmpty {
+                    VStack(spacing: 16) {
+                        Image(systemName: "clock.badge.questionmark")
+                            .font(.system(size: 48))
+                            .foregroundStyle(.secondary)
+                        Text("No sessions yet")
+                            .font(.headline)
+                            .foregroundStyle(.primary)
+                        Text("Complete a pomodoro session to see it here")
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                            .multilineTextAlignment(.center)
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .background(.ultraThinMaterial)
+                    .clipShape(RoundedRectangle(cornerRadius: 24))
+                } else {
+                    List {
+                        ForEach(sessions) { session in
+                            HStack {
+                                Text(Self.dateFormatter.string(from: session.completedAt))
+                                Spacer()
+                                Text(durationLabel(session.durationSeconds))
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
+                    }
+                    .background(.ultraThinMaterial)
+                    .clipShape(RoundedRectangle(cornerRadius: 24))
+                }
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(.ultraThinMaterial)
-        } else {
-            List {
-                ForEach(sessions) { session in
-                    HStack {
-                        Text(Self.dateFormatter.string(from: session.completedAt))
-                        Spacer()
-                        Text(durationLabel(session.durationSeconds))
+            .navigationTitle("History")
+            .toolbar {
+                ToolbarItem(placement: .automatic) {
+                    Button {
+                        showSettings = true
+                    } label: {
+                        Label("Settings", systemImage: "gearshape")
+                            .labelStyle(.titleAndIcon)
                             .foregroundStyle(.secondary)
                     }
                 }
             }
-            .background(.ultraThinMaterial)
+            .sheet(isPresented: $showSettings) {
+                NavigationStack {
+                    SettingsView()
+                }
+            }
         }
     }
 
@@ -58,5 +82,7 @@ struct SessionHistoryView: View {
 #Preview {
     SessionHistoryView()
         .environmentObject(StatisticsStore.shared)
+        .environmentObject(PomodoroSettings())
+        .environmentObject(ThemeSettings())
 }
 #endif

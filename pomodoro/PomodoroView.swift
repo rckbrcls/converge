@@ -59,8 +59,7 @@ struct PomodoroView: View {
                                 }
                             }
                         }
-                        .buttonStyle(.borderedProminent)
-                        .tint(phaseColors.accent)
+                        .buttonStyle(RoundedBorderedProminentButtonStyle(color: phaseColors.accent))
                         .animation(.easeInOut(duration: 0.3), value: timer.phase)
 
                         Button("Reset") {
@@ -68,8 +67,7 @@ struct PomodoroView: View {
                                 timer.reset()
                             }
                         }
-                        .buttonStyle(.bordered)
-                        .foregroundColor(phaseColors.primary)
+                        .buttonStyle(RoundedBorderedButtonStyle(color: phaseColors.primary))
                         .animation(.easeInOut(duration: 0.3), value: timer.phase)
                     }
                 }
