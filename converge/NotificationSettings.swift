@@ -57,6 +57,7 @@ enum SoundType: String, CaseIterable, Identifiable {
 final class NotificationSettings: ObservableObject {
     static let shared = NotificationSettings()
     
+    @AppStorage("notificationsEnabled") var notificationsEnabled: Bool = true
     @AppStorage("soundEnabled") var soundEnabled: Bool = true
     @AppStorage("soundType") private var soundTypeRawValue: String = SoundType.default.rawValue
     @AppStorage("workSoundType") private var workSoundTypeRawValue: String = SoundType.bell.rawValue
@@ -93,6 +94,7 @@ final class NotificationSettings: ObservableObject {
 
     func resetToDefaults() {
         objectWillChange.send()
+        notificationsEnabled = true
         soundEnabled = true
         soundTypeRawValue = SoundType.default.rawValue
         workSoundTypeRawValue = SoundType.bell.rawValue

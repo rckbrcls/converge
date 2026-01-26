@@ -11,43 +11,81 @@ struct NotificationSettingsSection: View {
     @State private var currentSound: NSSound?
 
     var body: some View {
-        Section("Sound Settings") {
-            Toggle("Enable Sound", isOn: $settings.soundEnabled)
+        Section {
+            Toggle(isOn: $settings.notificationsEnabled) {
+                Label("Enable Notifications", systemImage: "bell.badge.fill")
+            }
+        } header: {
+            Label("Notifications", systemImage: "bell.badge.fill")
+        }
+        
+        Section {
+            Toggle(isOn: $settings.soundEnabled) {
+                Label("Enable Sound", systemImage: "speaker.wave.2.fill")
+            }
 
             if settings.soundEnabled {
-                Picker("Pomodoro Sound", selection: $settings.workSoundType) {
-                    ForEach(SoundType.allCases) { soundType in
-                        Text(soundType.rawValue).tag(soundType)
+                VStack(alignment: .leading, spacing: 8) {
+                    Label {
+                        Picker("Sound when Pomodoro ends", selection: $settings.workSoundType) {
+                            ForEach(SoundType.allCases) { soundType in
+                                Text(soundType.rawValue).tag(soundType)
+                            }
+                        }
+                    } icon: {
+                        Image(systemName: "clock.fill")
                     }
-                }
 
-                Button("Test Pomodoro Sound") {
-                    testSound(soundType: settings.workSoundType)
-                }
-
-                Picker("Break Sound", selection: $settings.breakSoundType) {
-                    ForEach(SoundType.allCases) { soundType in
-                        Text(soundType.rawValue).tag(soundType)
+                    Button {
+                        testSound(soundType: settings.workSoundType)
+                    } label: {
+                        Label("Test Sound", systemImage: "play.circle")
                     }
+                    .font(.caption)
                 }
 
-                Button("Test Break Sound") {
-                    testSound(soundType: settings.breakSoundType)
+                VStack(alignment: .leading, spacing: 8) {
+                    Label {
+                        Picker("Sound when Break ends", selection: $settings.breakSoundType) {
+                            ForEach(SoundType.allCases) { soundType in
+                                Text(soundType.rawValue).tag(soundType)
+                            }
+                        }
+                    } icon: {
+                        Image(systemName: "cup.and.saucer.fill")
+                    }
+
+                    Button {
+                        testSound(soundType: settings.breakSoundType)
+                    } label: {
+                        Label("Test Sound", systemImage: "play.circle")
+                    }
+                    .font(.caption)
                 }
             }
+        } header: {
+            Label("Sound Settings", systemImage: "speaker.wave.2.fill")
         }
 
         Section {
-            Text("Notifications will appear when:")
+            if settings.notificationsEnabled {
+                Text("Notifications will appear when:")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Label("Work session completes", systemImage: "clock.badge.checkmark")
+                    Label("Break session completes", systemImage: "cup.and.saucer.fill")
+                }
                 .font(.caption)
                 .foregroundStyle(.secondary)
-
-            VStack(alignment: .leading, spacing: 4) {
-                Label("Work session completes", systemImage: "checkmark.circle")
-                Label("Break session completes", systemImage: "checkmark.circle")
+            } else {
+                Text("Notifications are disabled. You won't receive alerts when sessions complete.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
             }
-            .font(.caption)
-            .foregroundStyle(.secondary)
+        } header: {
+            Label("When notifications appear", systemImage: "info.circle.fill")
         }
     }
 

@@ -34,6 +34,10 @@ final class NotificationManager {
     }
     
     func sendWorkCompleteNotification() {
+        guard settings.notificationsEnabled else {
+            return
+        }
+        
         let content = UNMutableNotificationContent()
         content.title = "Pomodoro Complete!"
         content.body = "The 25 minutes of work are finished. Time for a break!"
@@ -44,6 +48,10 @@ final class NotificationManager {
     }
     
     func sendBreakCompleteNotification() {
+        guard settings.notificationsEnabled else {
+            return
+        }
+        
         let content = UNMutableNotificationContent()
         content.title = "Break Complete!"
         content.body = "The break is over. Time to get back to work!"
