@@ -51,9 +51,6 @@ struct PomodoroView: View {
                     .transition(.scale.combined(with: .opacity))
                     
                     HStack(spacing: 6) {
-                        Image(systemName: "checkmark.circle.fill")
-                            .font(.subheadline)
-                            .foregroundColor(phaseColors.secondary.opacity(0.7))
                         Text("Completed: \(timer.completedPomodoros)")
                             .font(.subheadline)
                             .foregroundColor(phaseColors.secondary.opacity(0.7))

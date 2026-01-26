@@ -1,1 +1,12 @@
 /.DS_Store
+
+# Build artifacts
+build/
+*.xcuserstate
+*.xcuserdatad
+
+# Sparkle EdDSA keys (private key should never be committed!)
+keys/eddsa_private_key.pem
+
+# Releases (appcast pode ser commitado, mas DMGs não)
+releases/*.dmg

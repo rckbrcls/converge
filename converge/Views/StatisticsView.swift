@@ -42,7 +42,7 @@ struct StatisticsView: View {
     }
 
     private var countersSection: some View {
-        HStack(spacing: 32) {
+        HStack(spacing: 12) {
             StatCounter(label: "Today", value: store.pomodorosToday)
             StatCounter(label: "Week", value: store.pomodorosThisWeek)
             StatCounter(label: "Month", value: store.pomodorosThisMonth)

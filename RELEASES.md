@@ -2,6 +2,8 @@
 
 Este documento explica como fazer releases e atualizações do app Pomodoro de forma automatizada.
 
+> **📚 Documentação Completa**: Para entender todo o ciclo de distribuição desde a primeira instalação até atualizações automáticas, veja [DISTRIBUTION.md](DISTRIBUTION.md)
+
 ## Visão Geral
 
 O sistema de releases automatiza:
@@ -65,7 +67,31 @@ Gera ou atualiza o appcast.xml para atualizações automáticas:
 ./scripts/generate-appcast.sh https://seu-dominio.com/releases build/Pomodoro-1.0.dmg
 ```
 
-### 5. `release.sh` - Release completo
+**Nota**: O script tenta usar assinatura EdDSA automaticamente se as chaves estiverem configuradas.
+
+### 5. `generate-keys.sh` - Gerar Chaves EdDSA
+
+Gera par de chaves EdDSA para assinatura de atualizações:
+
+```bash
+./scripts/generate-keys.sh
+```
+
+Isso cria `keys/eddsa_private_key.pem` e `keys/eddsa_public_key.pem`. A chave pública deve ser adicionada ao Info.plist.
+
+### 6. `sign-dmg.sh` - Assinar DMG
+
+Assina o DMG com chave EdDSA para atualizações Sparkle:
+
+```bash
+# Assinar DMG mais recente
+./scripts/sign-dmg.sh
+
+# Assinar DMG específico
+./scripts/sign-dmg.sh build/Pomodoro-1.0.dmg
+```
+
+### 7. `release.sh` - Release completo
 
 Script principal que faz tudo automaticamente:
 
@@ -209,7 +235,13 @@ Verifique se `APPCAST_URL_BASE` está configurado e se o DMG existe.
 
 Para distribuição mais avançada, considere:
 
-1. **Sparkle** para atualizações automáticas (veja `UPDATES.md`)
+1. **Sparkle** para atualizações automáticas (veja [UPDATES.md](UPDATES.md))
 2. **Assinatura de código** para distribuição fora da App Store
 3. **Notarização** do app com Apple
 4. **App Store Connect** para distribuição via Mac App Store
+
+## Referências
+
+- [DISTRIBUTION.md](DISTRIBUTION.md): Ciclo completo de distribuição e atualizações
+- [DMG.md](DMG.md): Como criar DMG
+- [UPDATES.md](UPDATES.md): Configuração do Sparkle

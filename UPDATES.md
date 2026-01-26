@@ -2,6 +2,8 @@
 
 Este documento explica como configurar e usar o sistema de atualizações automáticas do app Pomodoro usando o framework **Sparkle**.
 
+> **📚 Documentação Completa**: Para entender todo o ciclo de distribuição desde a primeira instalação até atualizações automáticas, veja [DISTRIBUTION.md](DISTRIBUTION.md)
+
 ## Visão Geral
 
 O app usa o framework **Sparkle** para fornecer atualizações automáticas aos usuários. Sparkle é o padrão da indústria para apps macOS distribuídos fora da Mac App Store.
@@ -228,9 +230,9 @@ O app já está configurado com `UpdateManager` e `UpdateSettingsSection`. Quand
 
 ## Scripts Disponíveis
 
-- `generate-appcast.sh`: Gera/atualiza o appcast.xml
-- `sign-dmg.sh`: Assina o DMG com EdDSA (a criar)
-- `generate-keys.sh`: Gera par de chaves EdDSA (a criar)
+- `generate-appcast.sh`: Gera/atualiza o appcast.xml (usa EdDSA automaticamente se disponível)
+- `sign-dmg.sh`: Assina o DMG com EdDSA
+- `generate-keys.sh`: Gera par de chaves EdDSA
 
 ## Próximos Passos
 
@@ -242,6 +244,9 @@ O app já está configurado com `UpdateManager` e `UpdateSettingsSection`. Quand
 
 ## Referências
 
+- [DISTRIBUTION.md](DISTRIBUTION.md): Ciclo completo de distribuição e atualizações
+- [RELEASES.md](RELEASES.md): Processo de releases
+- [DMG.md](DMG.md): Como criar DMG
 - [Sparkle Documentation](https://sparkle-project.org/documentation/)
 - [Sparkle GitHub](https://github.com/sparkle-project/Sparkle)
 - [App Signing Guide](https://developer.apple.com/documentation/security/notarizing_macos_software_before_distribution)

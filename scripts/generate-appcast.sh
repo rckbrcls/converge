@@ -40,10 +40,60 @@ BUILD=$(grep -A 1 "CURRENT_PROJECT_VERSION" "$PROJECT_ROOT/pomodoro.xcodeproj/pr
 # Calcular tamanho do arquivo
 FILE_SIZE=$(stat -f%z "$DMG_PATH")
 
-# Calcular hash SHA256 do DMG (temporário - deve ser substituído por assinatura EdDSA)
-echo "==> Calculating SHA256 hash..."
-echo "Warning: Using SHA256 hash as placeholder. For production, use EdDSA signature."
-DMG_HASH=$(shasum -a 256 "$DMG_PATH" | awk '{print $1}')
+# Tentar obter assinatura EdDSA se o DMG foi assinado
+# Verificar se existe chave privada e tentar assinar se necessário
+KEYS_DIR="$PROJECT_ROOT/keys"
+PRIVATE_KEY="$KEYS_DIR/eddsa_private_key.pem"
+DMG_HASH=""
+
+if [[ -f "$PRIVATE_KEY" ]]; then
+    # Tentar usar sign_update do Sparkle se disponível
+    SPARKLE_SIGN_TOOL=""
+    POSSIBLE_PATHS=(
+        "$PROJECT_ROOT/.build/checkouts/Sparkle/bin/sign_update"
+        "$PROJECT_ROOT/.build/checkouts/sparkle/bin/sign_update"
+        "$PROJECT_ROOT/Sparkle/bin/sign_update"
+        "$HOME/Library/Developer/Xcode/DerivedData/*/SourcePackages/checkouts/Sparkle/bin/sign_update"
+        "/usr/local/bin/sign_update"
+        "sign_update"
+    )
+    
+    for path in "${POSSIBLE_PATHS[@]}"; do
+        if [[ "$path" == *"*"* ]]; then
+            EXPANDED=$(ls -d $path 2>/dev/null | head -1)
+            if [[ -f "$EXPANDED" ]] && [[ -x "$EXPANDED" ]]; then
+                SPARKLE_SIGN_TOOL="$EXPANDED"
+                break
+            fi
+        elif command -v "$path" &> /dev/null; then
+            SPARKLE_SIGN_TOOL="$path"
+            break
+        elif [[ -f "$path" ]] && [[ -x "$path" ]]; then
+            SPARKLE_SIGN_TOOL="$path"
+            break
+        fi
+    done
+    
+    if [[ -n "$SPARKLE_SIGN_TOOL" ]]; then
+        echo "==> Signing DMG with EdDSA key..."
+        SIGN_OUTPUT=$("$SPARKLE_SIGN_TOOL" "$DMG_PATH" --ed-key-file "$PRIVATE_KEY" 2>&1)
+        if [[ $? -eq 0 ]]; then
+            # Extrair assinatura da saída XML
+            DMG_HASH=$(echo "$SIGN_OUTPUT" | grep -o 'sparkle:edSignature="[^"]*"' | cut -d'"' -f2)
+            if [[ -n "$DMG_HASH" ]]; then
+                echo "==> Using EdDSA signature"
+            fi
+        fi
+    fi
+fi
+
+# Se não conseguiu obter assinatura EdDSA, usar SHA256 como fallback
+if [[ -z "$DMG_HASH" ]]; then
+    echo "==> Calculating SHA256 hash (EdDSA signature not available)"
+    echo "Warning: Using SHA256 hash as placeholder. For production, use EdDSA signature."
+    echo "Run: ./scripts/sign-dmg.sh $DMG_PATH"
+    DMG_HASH=$(shasum -a 256 "$DMG_PATH" | awk '{print $1}')
+fi
 
 # Nome do arquivo DMG
 DMG_FILENAME=$(basename "$DMG_PATH")

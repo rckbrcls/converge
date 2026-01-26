@@ -2,6 +2,8 @@
 
 O DMG é a imagem de disco usada para distribuir o app no macOS.
 
+> **📚 Documentação Completa**: Para entender todo o ciclo de distribuição e atualizações, veja [DISTRIBUTION.md](DISTRIBUTION.md)
+
 ## Pré-requisitos
 
 - Xcode instalado
@@ -44,3 +46,23 @@ Para distribuir fora da App Store com assinatura e notarização:
 3. Use ferramentas como [create-dmg](https://github.com/create-dmg/create-dmg) ou um script próprio para montar o DMG a partir do `.app` exportado.
 
 O script atual gera um DMG **não assinado**, útil para uso local ou testes. Em Macs com Gatekeeper ativo, o usuário pode precisar clicar com botão direito → **Abrir** na primeira execução.
+
+## Assinar DMG para Atualizações Automáticas
+
+Para usar atualizações automáticas com Sparkle, você precisa assinar o DMG com EdDSA:
+
+```bash
+# 1. Gerar chaves (uma vez)
+./scripts/generate-keys.sh
+
+# 2. Assinar o DMG
+./scripts/sign-dmg.sh build/Pomodoro-X.X.dmg
+```
+
+Veja [UPDATES.md](UPDATES.md) para mais detalhes sobre atualizações automáticas.
+
+## Referências
+
+- [DISTRIBUTION.md](DISTRIBUTION.md): Ciclo completo de distribuição
+- [RELEASES.md](RELEASES.md): Processo de releases
+- [UPDATES.md](UPDATES.md): Sistema de atualizações automáticas
