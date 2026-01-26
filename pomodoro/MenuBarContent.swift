@@ -38,11 +38,17 @@ struct MenuBarContent: View {
             Button("Settings...") {
                 activateAndOpenWindow(id: "pomodoro-settings")
             }
+            .keyboardShortcut(",", modifiers: .command)
 
             Divider()
 
             Button("Quit") {
                 NSApplication.shared.terminate(nil)
+            }
+        }
+        .onAppear {
+            WindowManager.shared.setOpenWindowAction { id in
+                activateAndOpenWindow(id: id)
             }
         }
     }

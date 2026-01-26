@@ -82,15 +82,22 @@ struct SettingsView: View {
         .navigationTitle("Settings")
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
-                Button("Cancel") {
+                Button {
                     dismiss()
+                } label: {
+                    Label("Cancel", systemImage: "xmark")
+                        .labelStyle(.titleAndIcon)
                 }
+                .help("Cancel")
             }
             ToolbarItem(placement: .confirmationAction) {
-                Button("Save") {
+                Button {
                     saveSettings()
+                } label: {
+                    Label("Save", systemImage: "checkmark")
+                        .labelStyle(.titleAndIcon)
                 }
-                .fontWeight(.semibold)
+                .help("Save")
             }
         }
         .onAppear {

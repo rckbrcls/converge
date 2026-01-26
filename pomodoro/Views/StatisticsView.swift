@@ -8,17 +8,14 @@ import Charts
 
 struct StatisticsView: View {
     @EnvironmentObject private var store: StatisticsStore
-    @EnvironmentObject private var timer: PomodoroTimer
     @EnvironmentObject private var themeSettings: ThemeSettings
     @Environment(\.colorScheme) private var systemColorScheme
-    @State private var showSettings = false
 
     var body: some View {
         NavigationStack {
             ZStack {
-                phaseColors.background
-                    .ignoresSafeArea(edges: .all.subtracting(.top))
-                    .animation(.easeInOut(duration: 0.5), value: timer.phase)
+                PhaseColors.color(for: .idle, colorScheme: effectiveColorScheme).background
+                    .ignoresSafeArea()
                 
                 ScrollView {
                     VStack(alignment: .leading, spacing: 24) {
@@ -29,30 +26,12 @@ struct StatisticsView: View {
                 }
             }
             .navigationTitle("Statistics")
+            .toolbarBackground(.hidden, for: .windowToolbar)
             .toolbar {
                 ToolbarItem(placement: .automatic) {
-                    Button {
-                        CompactWindowService.resetToCompactSize()
-                    } label: {
-                        Label("Compact", systemImage: "arrow.down.right.and.arrow.up.left")
-                            .labelStyle(.titleAndIcon)
-                            .foregroundStyle(.secondary)
+                    SettingsToolbarButton {
+                        WindowManager.shared.openSettingsWindow()
                     }
-                    .help("Restore compact window size")
-                }
-                ToolbarItem(placement: .automatic) {
-                    Button {
-                        showSettings = true
-                    } label: {
-                        Label("Settings", systemImage: "gearshape")
-                            .labelStyle(.titleAndIcon)
-                            .foregroundStyle(.secondary)
-                    }
-                }
-            }
-            .sheet(isPresented: $showSettings) {
-                NavigationStack {
-                    SettingsView()
                 }
             }
         }
@@ -60,10 +39,6 @@ struct StatisticsView: View {
     
     private var effectiveColorScheme: ColorScheme {
         themeSettings.currentColorScheme ?? systemColorScheme
-    }
-    
-    private var phaseColors: PhaseColors {
-        PhaseColors.color(for: timer.phase, colorScheme: effectiveColorScheme)
     }
 
     private var countersSection: some View {
@@ -122,7 +97,6 @@ private struct StatCounter: View {
     let settings = PomodoroSettings()
     StatisticsView()
         .environmentObject(StatisticsStore.shared)
-        .environmentObject(PomodoroTimer(settings: settings))
         .environmentObject(settings)
         .environmentObject(ThemeSettings())
 }

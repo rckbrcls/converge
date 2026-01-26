@@ -6,6 +6,70 @@
 //
 
 import SwiftUI
+import AppKit
+
+struct WindowManagerSetupView: View {
+    @Environment(\.openWindow) private var openWindow
+    @EnvironmentObject private var pomodoroTimer: PomodoroTimer
+    @EnvironmentObject private var pomodoroSettings: PomodoroSettings
+    @EnvironmentObject private var themeSettings: ThemeSettings
+    @EnvironmentObject private var statisticsStore: StatisticsStore
+    
+    var body: some View {
+        TabView {
+            PomodoroView()
+                .tabItem {
+                    Image(systemName: "stopwatch.fill")
+                }
+            StatisticsView()
+                .tabItem {
+                    Image(systemName: "chart.bar.fill")
+                }
+            SessionHistoryView()
+                .tabItem {
+                    Image(systemName: "clock.arrow.circlepath")
+                }
+        }
+        .tabViewStyle(.automatic)
+        .overlay(alignment: .bottomTrailing) {
+            CompactButton()
+                .padding(16)
+        }
+        .preferredColorScheme(themeSettings.currentColorScheme)
+        .onAppear {
+            WindowManager.shared.setOpenWindowAction { id in
+                NSApp.activate(ignoringOtherApps: true)
+                
+                let windowTitle = id == "main" ? "" : "Pomodoro Settings"
+                
+                // Check if window already exists
+                if let existingWindow = NSApp.windows.first(where: { window in
+                    if id == "main" {
+                        return window.canBecomeMain && window.isVisible
+                    } else {
+                        return window.isVisible && window.title == windowTitle
+                    }
+                }) {
+                    existingWindow.makeKeyAndOrderFront(nil)
+                    existingWindow.orderFrontRegardless()
+                } else {
+                    openWindow(id: id)
+                }
+            }
+        }
+    }
+}
+
+struct AppCommands: Commands {
+    var body: some Commands {
+        CommandGroup(after: .appSettings) {
+            Button("Settings...") {
+                WindowManager.shared.openSettingsWindow()
+            }
+            .keyboardShortcut(",", modifiers: .command)
+        }
+    }
+}
 
 @main
 struct pomodoroApp: App {
@@ -23,35 +87,21 @@ struct pomodoroApp: App {
             await NotificationManager.shared.requestAuthorization()
         }
     }
+    
 
     var body: some Scene {
         WindowGroup(id: "main") {
-            TabView {
-                PomodoroView()
-                    .tabItem {
-                        Image(systemName: "stopwatch.fill")
-                        Text("Timer")
-                    }
-                StatisticsView()
-                    .tabItem {
-                        Image(systemName: "chart.bar.fill")
-                        Text("Statistics")
-                    }
-                SessionHistoryView()
-                    .tabItem {
-                        Image(systemName: "clock.arrow.circlepath")
-                        Text("History")
-                    }
-            }
-            .tabViewStyle(.automatic)
-            .environmentObject(pomodoroTimer)
-            .environmentObject(pomodoroSettings)
-            .environmentObject(themeSettings)
-            .environmentObject(StatisticsStore.shared)
-            .preferredColorScheme(themeSettings.currentColorScheme)
+            WindowManagerSetupView()
+                .environmentObject(pomodoroTimer)
+                .environmentObject(pomodoroSettings)
+                .environmentObject(themeSettings)
+                .environmentObject(StatisticsStore.shared)
         }
         .windowResizability(.automatic)
         .defaultSize(width: 400, height: 500)
+        .commands {
+            AppCommands()
+        }
 
         Window("Pomodoro Settings", id: "pomodoro-settings") {
             NavigationStack {
@@ -64,6 +114,9 @@ struct pomodoroApp: App {
         }
         .windowResizability(.automatic)
         .defaultSize(width: 420, height: 560)
+        .commands {
+            AppCommands()
+        }
 
         MenuBarExtra {
             MenuBarContent()
@@ -73,6 +126,9 @@ struct pomodoroApp: App {
                 .environmentObject(StatisticsStore.shared)
         } label: {
             Text(pomodoroTimer.formattedTime)
+        }
+        .commands {
+            AppCommands()
         }
     }
 }

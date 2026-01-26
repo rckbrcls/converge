@@ -9,13 +9,12 @@ struct PomodoroView: View {
     @EnvironmentObject private var timer: PomodoroTimer
     @EnvironmentObject private var themeSettings: ThemeSettings
     @Environment(\.colorScheme) private var systemColorScheme
-    @State private var showSettings = false
 
     var body: some View {
         NavigationStack {
             ZStack {
                 phaseColors.background
-                    .ignoresSafeArea(edges: .all.subtracting(.top))
+                    .ignoresSafeArea()
                     .animation(.easeInOut(duration: 0.5), value: timer.phase)
                 
                 VStack(spacing: 20) {
@@ -50,7 +49,7 @@ struct PomodoroView: View {
                     }
 
                     HStack(spacing: 12) {
-                        Button(timer.isRunning ? "Pause" : "Start") {
+                        Button {
                             withAnimation(.easeInOut(duration: 0.2)) {
                                 if timer.isRunning {
                                     timer.pause()
@@ -58,14 +57,23 @@ struct PomodoroView: View {
                                     timer.start()
                                 }
                             }
+                        } label: {
+                            Label(
+                                timer.isRunning ? "Pause" : "Start",
+                                systemImage: timer.isRunning ? "pause.fill" : "play.fill"
+                            )
+                            .labelStyle(.titleAndIcon)
                         }
                         .buttonStyle(RoundedBorderedProminentButtonStyle(color: phaseColors.accent))
                         .animation(.easeInOut(duration: 0.3), value: timer.phase)
 
-                        Button("Reset") {
+                        Button {
                             withAnimation(.easeInOut(duration: 0.2)) {
                                 timer.reset()
                             }
+                        } label: {
+                            Label("Reset", systemImage: "arrow.counterclockwise")
+                                .labelStyle(.titleAndIcon)
                         }
                         .buttonStyle(RoundedBorderedButtonStyle(color: phaseColors.primary))
                         .animation(.easeInOut(duration: 0.3), value: timer.phase)
@@ -73,30 +81,12 @@ struct PomodoroView: View {
                 }
                 .padding(32)
             }
+            .toolbarBackground(.hidden, for: .windowToolbar)
             .toolbar {
                 ToolbarItem(placement: .automatic) {
-                    Button {
-                        CompactWindowService.resetToCompactSize()
-                    } label: {
-                        Label("Compact", systemImage: "arrow.down.right.and.arrow.up.left")
-                            .labelStyle(.titleAndIcon)
-                            .foregroundStyle(.secondary)
+                    SettingsToolbarButton {
+                        WindowManager.shared.openSettingsWindow()
                     }
-                    .help("Restore compact window size")
-                }
-                ToolbarItem(placement: .automatic) {
-                    Button {
-                        showSettings = true
-                    } label: {
-                        Label("Settings", systemImage: "gearshape")
-                            .labelStyle(.titleAndIcon)
-                            .foregroundStyle(.secondary)
-                    }
-                }
-            }
-            .sheet(isPresented: $showSettings) {
-                NavigationStack {
-                    SettingsView()
                 }
             }
         }

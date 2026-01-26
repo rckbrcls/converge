@@ -7,10 +7,8 @@ import SwiftUI
 
 struct SessionHistoryView: View {
     @EnvironmentObject private var store: StatisticsStore
-    @EnvironmentObject private var timer: PomodoroTimer
     @EnvironmentObject private var themeSettings: ThemeSettings
     @Environment(\.colorScheme) private var systemColorScheme
-    @State private var showSettings = false
 
     private static let dateFormatter: DateFormatter = {
         let f = DateFormatter()
@@ -24,9 +22,8 @@ struct SessionHistoryView: View {
 
         NavigationStack {
             ZStack {
-                phaseColors.background
-                    .ignoresSafeArea(edges: .all.subtracting(.top))
-                    .animation(.easeInOut(duration: 0.5), value: timer.phase)
+                PhaseColors.color(for: .idle, colorScheme: effectiveColorScheme).background
+                    .ignoresSafeArea()
                 
                 Group {
                     if sessions.isEmpty {
@@ -58,30 +55,12 @@ struct SessionHistoryView: View {
                 }
             }
             .navigationTitle("History")
+            .toolbarBackground(.hidden, for: .windowToolbar)
             .toolbar {
                 ToolbarItem(placement: .automatic) {
-                    Button {
-                        CompactWindowService.resetToCompactSize()
-                    } label: {
-                        Label("Compact", systemImage: "arrow.down.right.and.arrow.up.left")
-                            .labelStyle(.titleAndIcon)
-                            .foregroundStyle(.secondary)
+                    SettingsToolbarButton {
+                        WindowManager.shared.openSettingsWindow()
                     }
-                    .help("Restore compact window size")
-                }
-                ToolbarItem(placement: .automatic) {
-                    Button {
-                        showSettings = true
-                    } label: {
-                        Label("Settings", systemImage: "gearshape")
-                            .labelStyle(.titleAndIcon)
-                            .foregroundStyle(.secondary)
-                    }
-                }
-            }
-            .sheet(isPresented: $showSettings) {
-                NavigationStack {
-                    SettingsView()
                 }
             }
         }
@@ -89,10 +68,6 @@ struct SessionHistoryView: View {
     
     private var effectiveColorScheme: ColorScheme {
         themeSettings.currentColorScheme ?? systemColorScheme
-    }
-    
-    private var phaseColors: PhaseColors {
-        PhaseColors.color(for: timer.phase, colorScheme: effectiveColorScheme)
     }
 
     private func durationLabel(_ seconds: Int) -> String {
@@ -106,7 +81,6 @@ struct SessionHistoryView: View {
     let settings = PomodoroSettings()
     SessionHistoryView()
         .environmentObject(StatisticsStore.shared)
-        .environmentObject(PomodoroTimer(settings: settings))
         .environmentObject(settings)
         .environmentObject(ThemeSettings())
 }
