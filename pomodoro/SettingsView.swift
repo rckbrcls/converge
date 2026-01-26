@@ -25,64 +25,34 @@ struct SettingsView: View {
     
     var body: some View {
         Form {
-            Section("Work Duration") {
-                Stepper(
+            Section("Timer Settings") {
+                DurationRow(
+                    label: "Work Duration",
                     value: $workDuration,
-                    in: 1...120,
-                    step: 1
-                ) {
-                    HStack {
-                        Text("Minutes")
-                        Spacer()
-                        Text("\(workDuration) min")
-                            .foregroundStyle(.secondary)
-                    }
-                }
-            }
-            
-            Section("Short Break Duration") {
-                Stepper(
+                    range: 1...120,
+                    unit: "min"
+                )
+                
+                DurationRow(
+                    label: "Short Break Duration",
                     value: $shortBreakDuration,
-                    in: 1...60,
-                    step: 1
-                ) {
-                    HStack {
-                        Text("Minutes")
-                        Spacer()
-                        Text("\(shortBreakDuration) min")
-                            .foregroundStyle(.secondary)
-                    }
-                }
-            }
-            
-            Section("Long Break Duration") {
-                Stepper(
+                    range: 1...60,
+                    unit: "min"
+                )
+                
+                DurationRow(
+                    label: "Long Break Duration",
                     value: $longBreakDuration,
-                    in: 1...120,
-                    step: 1
-                ) {
-                    HStack {
-                        Text("Minutes")
-                        Spacer()
-                        Text("\(longBreakDuration) min")
-                            .foregroundStyle(.secondary)
-                    }
-                }
-            }
-            
-            Section("Pomodoros Until Long Break") {
-                Stepper(
+                    range: 1...120,
+                    unit: "min"
+                )
+                
+                DurationRow(
+                    label: "Pomodoros Until Long Break",
                     value: $pomodorosUntilLongBreak,
-                    in: 1...20,
-                    step: 1
-                ) {
-                    HStack {
-                        Text("Count")
-                        Spacer()
-                        Text("\(pomodorosUntilLongBreak)")
-                            .foregroundStyle(.secondary)
-                    }
-                }
+                    range: 1...20,
+                    unit: "count"
+                )
             }
             
             Section("Visual Settings") {

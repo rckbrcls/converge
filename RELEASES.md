@@ -9,6 +9,7 @@ O sistema de releases automatiza:
 - Build do app em modo Release
 - Criação do DMG para distribuição
 - Criação de tags Git (opcional)
+- Geração de appcast para atualizações automáticas (opcional)
 
 ## Scripts Disponíveis
 
@@ -52,7 +53,19 @@ Cria o DMG do app (já existente):
 ./scripts/create-dmg.sh 2.0
 ```
 
-### 4. `release.sh` - Release completo
+### 4. `generate-appcast.sh` - Gerar Appcast
+
+Gera ou atualiza o appcast.xml para atualizações automáticas:
+
+```bash
+# Gerar appcast com URL base
+./scripts/generate-appcast.sh https://seu-dominio.com/releases
+
+# Especificar DMG específico
+./scripts/generate-appcast.sh https://seu-dominio.com/releases build/Pomodoro-1.0.dmg
+```
+
+### 5. `release.sh` - Release completo
 
 Script principal que faz tudo automaticamente:
 
@@ -70,6 +83,16 @@ Script principal que faz tudo automaticamente:
 **Opções:**
 - `--skip-version`: Não incrementa a versão (usa a atual)
 - `--skip-git`: Não faz commit nem cria tag
+
+**Com atualizações automáticas:**
+
+```bash
+# Configurar URL do appcast
+export APPCAST_URL_BASE=https://seu-dominio.com/releases
+
+# Fazer release (gera appcast automaticamente)
+./scripts/release.sh patch
+```
 
 **Exemplos:**
 ```bash
@@ -99,6 +122,24 @@ Script principal que faz tudo automaticamente:
    git push origin v1.0
    ```
 
+### Release com Atualizações Automáticas
+
+1. **Configurar URL do appcast:**
+   ```bash
+   export APPCAST_URL_BASE=https://seu-dominio.com/releases
+   ```
+
+2. **Fazer release:**
+   ```bash
+   ./scripts/release.sh patch
+   ```
+
+3. **Fazer upload:**
+   - DMG: `build/Pomodoro-X.X.dmg` → servidor
+   - Appcast: `releases/appcast.xml` → servidor
+
+4. **Configurar Sparkle no app** (veja `UPDATES.md`)
+
 ### Release Rápido (sem Git)
 
 Para testes locais ou builds rápidos:
@@ -126,6 +167,18 @@ Após um release, você encontrará:
 
 - **DMG**: `build/Pomodoro-X.X.dmg`
 - **App**: `build/DerivedData/Build/Products/Release/pomodoro.app`
+- **Appcast** (se configurado): `releases/appcast.xml`
+
+## Atualizações Automáticas
+
+Para configurar atualizações automáticas usando Sparkle, veja o arquivo **`UPDATES.md`** para instruções completas.
+
+Resumo rápido:
+1. Adicionar Sparkle framework ao projeto
+2. Configurar `SUFeedURL` no Info.plist
+3. Gerar chaves EdDSA para assinatura
+4. Fazer upload do appcast e DMGs para servidor
+5. Os usuários receberão atualizações automaticamente!
 
 ## Integração com CI/CD
 
@@ -133,8 +186,9 @@ Para automatizar releases em CI/CD:
 
 ```bash
 # Exemplo para GitHub Actions ou similar
+export APPCAST_URL_BASE=https://seu-dominio.com/releases
 ./scripts/release.sh patch --skip-git
-# Upload do DMG como artifact
+# Upload do DMG e appcast como artifacts
 ```
 
 ## Troubleshooting
@@ -148,11 +202,14 @@ Certifique-se de que o Xcode está instalado e o projeto compila corretamente.
 ### Versão não atualiza
 Verifique se o arquivo `project.pbxproj` não está bloqueado ou em uso pelo Xcode.
 
+### Appcast não gera
+Verifique se `APPCAST_URL_BASE` está configurado e se o DMG existe.
+
 ## Próximos Passos
 
 Para distribuição mais avançada, considere:
 
-1. **Assinatura de código** para distribuição fora da App Store
-2. **Notarização** do app com Apple
-3. **Sparkle** para atualizações automáticas
+1. **Sparkle** para atualizações automáticas (veja `UPDATES.md`)
+2. **Assinatura de código** para distribuição fora da App Store
+3. **Notarização** do app com Apple
 4. **App Store Connect** para distribuição via Mac App Store

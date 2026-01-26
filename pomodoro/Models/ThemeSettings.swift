@@ -18,6 +18,14 @@ enum AppTheme: String, CaseIterable {
         case .automatic: return "Automatic"
         }
     }
+
+    var systemImage: String {
+        switch self {
+        case .light: return "sun.max.fill"
+        case .dark: return "moon.fill"
+        case .automatic: return "circle.lefthalf.filled"
+        }
+    }
 }
 
 @MainActor

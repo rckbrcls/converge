@@ -195,6 +195,9 @@
 			);
 			mainGroup = 2CDD9D012F26D9980013D3FD;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				2C641BE42F26EB1B00FA7A2E /* XCRemoteSwiftPackageReference "Sparkle" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 2CDD9D0B2F26D9980013D3FD /* Products */;
 			projectDirPath = "";
@@ -573,6 +576,17 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		2C641BE42F26EB1B00FA7A2E /* XCRemoteSwiftPackageReference "Sparkle" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sparkle-project/Sparkle";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.8.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
 	};
 	rootObject = 2CDD9D022F26D9980013D3FD /* Project object */;
 }

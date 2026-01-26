@@ -80,7 +80,8 @@ struct PomodoroView: View {
                     Button {
                         CompactWindowService.resetToCompactSize()
                     } label: {
-                        Image(systemName: "rectangle.compress.vertical")
+                        Label("Compact", systemImage: "rectangle.compress.vertical")
+                            .labelStyle(.titleAndIcon)
                             .foregroundStyle(.secondary)
                     }
                     .help("Restore compact window size")
@@ -89,7 +90,8 @@ struct PomodoroView: View {
                     Button {
                         showSettings = true
                     } label: {
-                        Image(systemName: "gearshape")
+                        Label("Settings", systemImage: "gearshape")
+                            .labelStyle(.titleAndIcon)
                             .foregroundStyle(.secondary)
                     }
                 }

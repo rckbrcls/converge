@@ -52,6 +52,18 @@ fi
 
 echo "==> DMG created: $DMG_PATH"
 
+# 3.5. Gerar appcast (se URL_BASE estiver configurada)
+if [[ -n "$APPCAST_URL_BASE" ]]; then
+    echo "==> Generating appcast..."
+    "$SCRIPT_DIR/generate-appcast.sh" "$APPCAST_URL_BASE" "$DMG_PATH"
+    echo "==> Appcast generated in releases/appcast.xml"
+    echo "==> Don't forget to upload the DMG and appcast.xml to your server!"
+else
+    echo "==> To generate appcast, set APPCAST_URL_BASE environment variable:"
+    echo "    export APPCAST_URL_BASE=https://seu-dominio.com/releases"
+    echo "    $0 $INCREMENT_TYPE"
+fi
+
 # 4. Git operations (se não pular e se git estiver disponível)
 if [[ "$SKIP_GIT" == false ]] && command -v git &> /dev/null; then
     if git rev-parse --git-dir > /dev/null 2>&1; then
