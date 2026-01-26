@@ -98,7 +98,9 @@ struct SettingsView: View {
                     }
                 }
             }
-            
+
+            NotificationSettingsSection()
+
             Section {
                 Button("Reset to Defaults") {
                     resetToDefaults()

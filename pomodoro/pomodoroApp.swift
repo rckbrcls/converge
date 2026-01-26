@@ -53,13 +53,7 @@ struct pomodoroApp: App {
             .environmentObject(StatisticsStore.shared)
         }
         .windowResizability(.automatic)
-        .defaultSize(width: 420, height: 480)
-
-        Window("Notification Settings", id: "notification-settings") {
-            NotificationSettingsView()
-        }
-        .windowResizability(.automatic)
-        .defaultSize(width: 400, height: 320)
+        .defaultSize(width: 420, height: 560)
 
         MenuBarExtra {
             MenuBarContent()

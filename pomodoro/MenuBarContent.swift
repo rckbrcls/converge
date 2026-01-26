@@ -35,12 +35,8 @@ struct MenuBarContent: View {
                 activateAndOpenWindow(id: "main")
             }
 
-            Button("Pomodoro Settings...") {
+            Button("Settings...") {
                 activateAndOpenWindow(id: "pomodoro-settings")
-            }
-
-            Button("Notification Settings...") {
-                activateAndOpenWindow(id: "notification-settings")
             }
 
             Divider()
@@ -53,6 +49,37 @@ struct MenuBarContent: View {
 
     private func activateAndOpenWindow(id: String) {
         NSApp.activate(ignoringOtherApps: true)
-        openWindow(id: id)
+        
+        // Map window IDs to titles for finding existing windows
+        let windowTitles: [String: String] = [
+            "main": "",
+            "pomodoro-settings": "Pomodoro Settings"
+        ]
+        
+        let targetTitle = windowTitles[id] ?? ""
+        
+        // Check if window already exists
+        if let existingWindow = findExistingWindow(id: id, title: targetTitle) {
+            // Window exists, just bring it to front
+            existingWindow.makeKeyAndOrderFront(nil)
+            existingWindow.orderFrontRegardless()
+        } else {
+            // Window doesn't exist, create new one
+            openWindow(id: id)
+        }
+    }
+    
+    private func findExistingWindow(id: String, title: String) -> NSWindow? {
+        if id == "main" {
+            // For main window, find any visible window that can become main
+            return NSApp.windows.first { window in
+                window.canBecomeMain && window.isVisible
+            }
+        } else {
+            // For other windows, find by title
+            return NSApp.windows.first { window in
+                window.isVisible && window.title == title
+            }
+        }
     }
 }
