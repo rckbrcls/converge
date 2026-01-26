@@ -1,7 +1,7 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Download } from "lucide-react";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { Download, Github } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion } from "motion/react";
 import { useState, useEffect } from "react";
@@ -20,12 +20,12 @@ export function HeroSection() {
   );
 
   useEffect(() => {
-    // Se já tem URL configurada, não precisa buscar
+    // If URL is already configured, no need to fetch
     if (process.env.NEXT_PUBLIC_DMG_DOWNLOAD_URL) {
       return;
     }
 
-    // Buscar versão mais recente da API
+    // Fetch latest version from API
     fetch("/api/releases?type=latest")
       .then((res) => {
         if (res.ok) {
@@ -38,7 +38,7 @@ export function HeroSection() {
       })
       .catch((error) => {
         console.error("Error fetching latest release:", error);
-        // Manter estado atual (sem URL = botão desabilitado)
+        // Keep current state (no URL = button disabled)
       });
   }, []);
 
@@ -50,6 +50,28 @@ export function HeroSection() {
       )}
     >
       <VantaTrunkBackground chaos={chaos} />
+      <motion.div
+        className="absolute top-4 right-4 z-20 sm:top-6 sm:right-6"
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, ease: "easeOut", delay: 0.3 }}
+      >
+        <motion.a
+          href="https://github.com/rckbrcls/converge"
+          target="_blank"
+          rel="noopener noreferrer"
+          className={cn(
+            buttonVariants({ variant: "outline", size: "default" }),
+            "inline-flex items-center gap-2"
+          )}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          transition={{ duration: 0.2 }}
+        >
+          <Github className="size-4" />
+          GitHub
+        </motion.a>
+      </motion.div>
       <div className="relative z-10 flex flex-col items-center justify-center gap-6 sm:gap-8">
         <motion.h1
           initial={{ opacity: 0, y: 20 }}
@@ -71,10 +93,11 @@ export function HeroSection() {
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5, ease: "easeOut", delay: 0.4 }}
-          className="flex flex-col gap-4 sm:flex-row sm:gap-3"
+          className="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center sm:justify-center sm:gap-3"
         >
           {downloadUrl ? (
             <motion.div
+              className="flex shrink-0"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               transition={{ duration: 0.2 }}
@@ -95,10 +118,11 @@ export function HeroSection() {
             </motion.div>
           ) : (
             <motion.div
+              className="flex shrink-0"
               onHoverStart={() => setChaos(0.2)}
               onHoverEnd={() => setChaos(1.5)}
             >
-              <Button size="lg" disabled >
+              <Button size="lg" disabled>
                 <Download className="size-4" />
                 Download coming soon
               </Button>
