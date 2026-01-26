@@ -45,13 +45,6 @@ Contributions are welcome! Whether you want to fix a bug, add a feature, improve
 5. Push to the branch (`git push origin feature/your-feature`)
 6. Open a Pull Request
 
-### Code Standards
-
-- Write code in English (variables, methods, comments)
-- Create separate files for each component
-- Keep code modularized
-- Remove legacy code when making significant changes
-
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
