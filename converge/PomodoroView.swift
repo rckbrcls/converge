@@ -19,6 +19,17 @@ struct PomodoroView: View {
                     .animation(.easeInOut(duration: 0.5), value: timer.isRunning)
                 
                 VStack(spacing: 20) {
+                    HStack(spacing: 8) {
+                        Image(systemName: phaseIcon)
+                            .font(.headline)
+                            .foregroundColor(phaseColors.secondary)
+                        Text(phaseLabel)
+                            .font(.headline)
+                            .foregroundColor(phaseColors.secondary)
+                    }
+                    .animation(.easeInOut(duration: 0.3), value: timer.phase)
+                    .animation(.easeInOut(duration: 0.3), value: timer.isRunning)
+                    
                     ZStack {
                         CircularProgressView(
                             progress: timer.progress,
@@ -39,17 +50,28 @@ struct PomodoroView: View {
                     }
                     .transition(.scale.combined(with: .opacity))
                     
-                    Text(phaseLabel)
-                        .font(.headline)
-                        .foregroundColor(phaseColors.secondary)
-                        .animation(.easeInOut(duration: 0.3), value: timer.phase)
-                        .animation(.easeInOut(duration: 0.3), value: timer.isRunning)
-                    
-                    if timer.completedPomodoros > 0 {
+                    HStack(spacing: 6) {
+                        Image(systemName: "checkmark.circle.fill")
+                            .font(.subheadline)
+                            .foregroundColor(phaseColors.secondary.opacity(0.7))
                         Text("Completed: \(timer.completedPomodoros)")
                             .font(.subheadline)
                             .foregroundColor(phaseColors.secondary.opacity(0.7))
-                            .transition(.opacity)
+                    }
+                    .transition(.opacity)
+                    
+                    if timer.phase != .break {
+                        HStack(spacing: 6) {
+                            Image(systemName: "clock.fill")
+                                .font(.subheadline)
+                                .foregroundColor(phaseColors.secondary.opacity(0.7))
+                            Text("Next Break: \(timer.nextBreakFormattedTime)")
+                                .font(.subheadline)
+                                .foregroundColor(phaseColors.secondary.opacity(0.7))
+                        }
+                        .transition(.opacity)
+                        .animation(.easeInOut(duration: 0.3), value: timer.completedPomodoros)
+                        .animation(.easeInOut(duration: 0.3), value: timer.phase)
                     }
 
                     HStack(spacing: 12) {
@@ -104,6 +126,14 @@ struct PomodoroView: View {
         case .idle: return "Idle"
         case .work: return "Work"
         case .break: return "Break"
+        }
+    }
+    
+    private var phaseIcon: String {
+        switch timer.phase {
+        case .idle: return "timer"
+        case .work: return "brain.head.profile"
+        case .break: return "cup.and.saucer.fill"
         }
     }
     

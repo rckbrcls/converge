@@ -41,6 +41,24 @@ final class PomodoroTimer: ObservableObject {
         let elapsed = currentPhaseTotalSeconds - remainingSeconds
         return max(0.0, min(1.0, Double(elapsed) / Double(currentPhaseTotalSeconds)))
     }
+    
+    var nextBreakDurationSeconds: Int {
+        let nextPomodoroCount = completedPomodoros + 1
+        let isLongBreak = nextPomodoroCount % settings.pomodorosUntilLongBreak == 0
+        return isLongBreak ? settings.longBreakDurationSeconds : settings.shortBreakDurationSeconds
+    }
+    
+    var nextBreakType: String {
+        let nextPomodoroCount = completedPomodoros + 1
+        let isLongBreak = nextPomodoroCount % settings.pomodorosUntilLongBreak == 0
+        return isLongBreak ? "Long Break" : "Short Break"
+    }
+    
+    var nextBreakFormattedTime: String {
+        let m = nextBreakDurationSeconds / 60
+        let s = nextBreakDurationSeconds % 60
+        return String(format: "%02d:%02d", m, s)
+    }
 
     init(settings: PomodoroSettings) {
         self.settings = settings
