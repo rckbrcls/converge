@@ -55,7 +55,6 @@ class WindowObserver: ObservableObject {
         guard let window = NSApp.keyWindow ?? NSApp.mainWindow else { return }
 
         let width = window.frame.width
-        let height = window.frame.height
 
         // Use a small tolerance for floating point comparisons
         // Compact size is approx 400x500 (content size)

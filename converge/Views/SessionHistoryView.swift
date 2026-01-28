@@ -126,28 +126,36 @@ struct SessionHistoryView: View {
     }
 
     private func sessionList(sections: [DaySection]) -> some View {
-        List {
-            Section {
+        ScrollView {
+            LazyVStack(spacing: 0, pinnedViews: []) {
                 filterTimeline
-                    .listRowBackground(Color.clear)
-                    .listRowSeparator(.hidden)
-            }
-            .padding(.horizontal, 24)
+                    .padding(.horizontal, 20)
+                    .padding(.bottom, 10)
 
-            ForEach(sections, id: \.date) { section in
-                Section(header: Text(sectionTitle(for: section.date))) {
-                    ForEach(section.sessions) { session in
-                        SessionRowView(session: session, themeColor: phaseColors.primary)
-                            .listRowBackground(Color.clear)
-                            .listRowSeparator(.hidden)
+                ForEach(sections, id: \.date) { section in
+                    Section {
+                        ForEach(section.sessions) { session in
+                            SessionRowView(session: session, phaseColors: phaseColors)
+                                .padding(.horizontal, 20)
+                                .padding(.vertical, 4)
+                        }
+                    } header: {
+                        HStack {
+                            Text(sectionTitle(for: section.date))
+                                .font(.headline)
+                                .foregroundColor(phaseColors.secondary)
+                            Spacer()
+                        }
+                        .padding(.horizontal, 20)
+                        .padding(.vertical, 8)
+                        .background(phaseColors.background)
                     }
                 }
-                .padding(24)
             }
+            .padding(.top, 16)
+            .padding(.bottom, 40) // Add extra padding at the bottom
         }
         .scrollIndicators(.hidden)
-        .scrollContentBackground(.hidden)
-        .listStyle(.plain)
     }
 
     private var emptyStateView: some View {
@@ -198,7 +206,7 @@ struct SessionHistoryView: View {
 
 struct SessionRowView: View {
     let session: PomodoroSession
-    let themeColor: Color
+    let phaseColors: PhaseColors
 
     private var startTime: String {
         let start = session.completedAt.addingTimeInterval(-Double(session.durationSeconds))
@@ -219,11 +227,11 @@ struct SessionRowView: View {
             Text(startTime + " - " + endTime)
                 .font(.system(.body, design: .rounded))
                 .fontWeight(.medium)
-                .foregroundColor(.primary)
+                .foregroundColor(phaseColors.primary)
             Spacer()
             Text(durationString)
                 .font(.caption)
-                .foregroundColor(.secondary)
+                .foregroundColor(phaseColors.secondary.opacity(0.8))
         }
         .padding(12)
         .background(
