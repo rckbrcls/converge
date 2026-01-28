@@ -12,3 +12,6 @@ keys/eddsa_private_key.pem
 releases/*.dmg
 releases/*.xcarchive
 releases/DerivedData
+
+# Release scripts and documentation (sensitive information)
+release/

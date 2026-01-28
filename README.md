@@ -38,28 +38,6 @@ Visit the [download page](https://your-vercel-app.vercel.app) to download the la
 
 Converge uses Sparkle for automatic updates. The app will check for updates daily and notify you when a new version is available. You can also manually check for updates in Settings → Updates.
 
-## Development
-
-### Setting Up for Releases
-
-1. **Generate EdDSA Keys** (first time only):
-   ```bash
-   ./scripts/generate-keys.sh
-   # or
-   python3 scripts/generate-keys-python.py
-   ```
-
-2. **Add Public Key to Project**:
-   - Copy the public key from the script output
-   - Add it to `converge.xcodeproj/project.pbxproj` as `INFOPLIST_KEY_SUPublicEDKey`
-
-3. **Create a Release**:
-   ```bash
-   ./scripts/generate-release.sh <version> [release_notes_file]
-   ```
-
-See [docs/RELEASE.md](docs/RELEASE.md) for detailed release instructions.
-
 ## Open Source
 
 Converge is an open source project. We believe in transparency, community collaboration, and making productivity tools accessible to everyone. Feel free to explore the code, report issues, or contribute improvements.
