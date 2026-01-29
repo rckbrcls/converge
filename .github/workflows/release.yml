@@ -35,6 +35,12 @@ jobs:
       - name: Show Xcode version
         run: xcodebuild -version
 
+      - name: Compute build number
+        run: |
+          set -euo pipefail
+          BUILD_VERSION="${GITHUB_RUN_NUMBER}"
+          echo "BUILD_VERSION_OVERRIDE=$BUILD_VERSION" >> "$GITHUB_ENV"
+
       - name: Build Release (unsigned)
         env:
           MARKETING_VERSION_OVERRIDE: ${{ inputs.version }}
@@ -50,6 +56,9 @@ jobs:
 
           if [ -n "${MARKETING_VERSION_OVERRIDE:-}" ]; then
             BUILD_SETTINGS+=("MARKETING_VERSION=$MARKETING_VERSION_OVERRIDE")
+          fi
+          if [ -n "${BUILD_VERSION_OVERRIDE:-}" ]; then
+            BUILD_SETTINGS+=("CURRENT_PROJECT_VERSION=$BUILD_VERSION_OVERRIDE")
           fi
 
           xcodebuild \
