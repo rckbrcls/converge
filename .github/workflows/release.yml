@@ -76,6 +76,13 @@ jobs:
 
           echo "APP_PATH=$APP_PATH" >> "$GITHUB_ENV"
 
+      - name: Verify Sparkle Info.plist keys
+        run: |
+          set -euo pipefail
+          INFO_PLIST="$APP_PATH/Contents/Info.plist"
+          /usr/libexec/PlistBuddy -c "Print :SUPublicEDKey" "$INFO_PLIST" > /dev/null
+          /usr/libexec/PlistBuddy -c "Print :SUFeedURL" "$INFO_PLIST" > /dev/null
+
       - name: Package ZIP
         run: |
           set -euo pipefail
