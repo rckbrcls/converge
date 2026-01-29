@@ -133,13 +133,7 @@ struct SessionHistoryView: View {
                     .padding(.bottom, 10)
 
                 SwiftUI.ForEach(sections, id: \.date) { section in
-                    SwiftUI.Section {
-                        SwiftUI.ForEach(section.sessions) { session in
-                            SessionRowView(session: session, phaseColors: phaseColors)
-                                .padding(.horizontal, 20)
-                                .padding(.vertical, 4)
-                        }
-                    } header: {
+                    VStack(spacing: 0) {
                         HStack {
                             Text(sectionTitle(for: section.date))
                                 .font(.headline)
@@ -149,6 +143,12 @@ struct SessionHistoryView: View {
                         .padding(.horizontal, 20)
                         .padding(.vertical, 8)
                         .background(phaseColors.background)
+
+                        SwiftUI.ForEach(section.sessions) { session in
+                            SessionRowView(session: session, phaseColors: phaseColors)
+                                .padding(.horizontal, 20)
+                                .padding(.vertical, 4)
+                        }
                     }
                 }
             }
