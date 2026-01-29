@@ -40,6 +40,7 @@ struct WindowManagerSetupView: View {
         }
         .overlay(alignment: .bottom) {
             HStack {
+                FullScreenButton()
                 Spacer()
                 CompactButton()
             }

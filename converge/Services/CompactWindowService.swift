@@ -33,4 +33,10 @@ enum CompactWindowService {
         guard let window = NSApp.keyWindow ?? NSApp.mainWindow else { return }
         window.zoom(nil)
     }
+
+    /// Toggles full screen mode for the key window.
+    static func toggleFullScreen() {
+        guard let window = NSApp.keyWindow ?? NSApp.mainWindow else { return }
+        window.toggleFullScreen(nil)
+    }
 }
