@@ -5,7 +5,6 @@
 
 import Foundation
 import Combine
-import WidgetKit
 
 enum PomodoroPhase: String {
     case idle
@@ -27,9 +26,6 @@ final class PomodoroTimer: ObservableObject {
 
     private var timerCancellable: AnyCancellable?
     private var settingsCancellable: AnyCancellable?
-    
-    private let appGroupIdentifier = "group.polterware.pomodoro.shared"
-    private let timerDataKey = "widgetTimerData"
 
     var formattedTime: String {
         let m = remainingSeconds / 60
@@ -72,9 +68,6 @@ final class PomodoroTimer: ObservableObject {
                 self?.updateTimerFromSettings()
             }
         }
-        
-        // Sync initial state to widget
-        syncToWidget()
     }
     
     private func updateTimerFromSettings() {
@@ -101,8 +94,6 @@ final class PomodoroTimer: ObservableObject {
                     self?.tick()
                 }
             }
-        
-        syncToWidget()
     }
 
     func pause() {
@@ -110,7 +101,6 @@ final class PomodoroTimer: ObservableObject {
         isRunning = false
         timerCancellable?.cancel()
         timerCancellable = nil
-        syncToWidget()
     }
 
     func reset() {
@@ -120,15 +110,12 @@ final class PomodoroTimer: ObservableObject {
         currentPhaseTotalSeconds = settings.workDurationSeconds
         completedPomodoros = 0
         isWaitingForManualStart = false
-        syncToWidget()
     }
 
     private func tick() {
         guard isRunning else { return }
         if remainingSeconds > 0 {
             remainingSeconds -= 1
-            // Sync every second when running
-            syncToWidget()
         } else {
             advanceToNextPhase()
         }
@@ -167,12 +154,10 @@ final class PomodoroTimer: ObservableObject {
         // Check if auto continue is enabled
         if settings.autoContinue {
             // Continue automatically - timer keeps running
-            syncToWidget()
         } else {
             // Manual mode - pause and wait for user confirmation
             pause()
             isWaitingForManualStart = true
-            syncToWidget()
         }
     }
     
@@ -180,36 +165,5 @@ final class PomodoroTimer: ObservableObject {
         guard isWaitingForManualStart else { return }
         isWaitingForManualStart = false
         start()
-    }
-    
-    private func syncToWidget() {
-        guard let sharedDefaults = UserDefaults(suiteName: appGroupIdentifier) else { return }
-        
-        struct WidgetTimerData: Codable {
-            let phase: String
-            let remainingSeconds: Int
-            let isRunning: Bool
-            let completedPomodoros: Int
-            let lastUpdated: Date
-        }
-        
-        let data = WidgetTimerData(
-            phase: phase.rawValue,
-            remainingSeconds: remainingSeconds,
-            isRunning: isRunning,
-            completedPomodoros: completedPomodoros,
-            lastUpdated: Date()
-        )
-        
-        do {
-            let encoded = try JSONEncoder().encode(data)
-            sharedDefaults.set(encoded, forKey: timerDataKey)
-            sharedDefaults.synchronize()
-            
-            // Reload widget timelines
-            WidgetCenter.shared.reloadTimelines(ofKind: "PomodoroWidget")
-        } catch {
-            print("Failed to sync timer data to widget: \(error)")
-        }
     }
 }

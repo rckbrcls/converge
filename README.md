@@ -10,7 +10,6 @@ Converge is a native Pomodoro app for macOS built with SwiftUI. Focused on produ
 - **Statistics**: Track your productivity with daily, weekly, and monthly counters
 - **Session History**: Complete record of all completed sessions
 - **Menu Bar Integration**: Timer always visible in the macOS menu bar
-- **macOS Widget**: Desktop widget to track the timer without opening the app
 - **Notifications**: Alerts and sounds at the end of each phase
 - **Themes**: Light, dark, or follow system appearance
 - **Automatic Updates**: Stay up to date with automatic updates using Sparkle
