@@ -42,7 +42,7 @@ curl -fsSL https://converge-focus.vercel.app/install | bash -s -- --version 1.0.
 
 ## Requirements
 
-- macOS 14.6 or higher
+- macOS 26.0 or higher
 
 ## Updates
 
