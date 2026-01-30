@@ -86,13 +86,7 @@ struct SettingsView: View {
                 iconName: "number.circle.fill"
             )
             Toggle(isOn: $settings.autoContinue) {
-                Label {
-                    Text("Automatically start next phase when current phase ends")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                } icon: {
-                    Image(systemName: "arrow.clockwise")
-                }
+                Label("Auto Continue", systemImage: "arrow.clockwise")
             }
         }
     }
