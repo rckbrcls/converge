@@ -10,11 +10,11 @@ struct SettingsView: View {
     @EnvironmentObject private var themeSettings: ThemeSettings
     @EnvironmentObject private var store: StatisticsStore
     @ObservedObject private var updateManager = UpdateManager.shared
-    
+
     @State private var showResetFeedback = false
     @State private var showClearConfirmation = false
     @State private var showResetConfirmation = false
-    
+
     var body: some View {
         Form {
             timerSettingsSection
@@ -54,7 +54,7 @@ struct SettingsView: View {
             .padding(.top, 20)
         }
     }
-    
+
     private var timerSettingsSection: some View {
         Section("Timer Settings") {
             DurationRow(
@@ -87,19 +87,16 @@ struct SettingsView: View {
             )
             Toggle(isOn: $settings.autoContinue) {
                 Label {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("Auto Continue")
-                        Text("Automatically start next phase when current phase ends")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
+                    Text("Automatically start next phase when current phase ends")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
                 } icon: {
                     Image(systemName: "arrow.clockwise")
                 }
             }
         }
     }
-    
+
     private var visualSettingsSection: some View {
         Section("Visual Settings") {
             Label {
@@ -112,17 +109,9 @@ struct SettingsView: View {
             } icon: {
                 Image(systemName: "paintbrush.fill")
             }
-            HStack(spacing: 4) {
-                Image(systemName: "info.circle")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                Text("Choose how the app should appear. System follows your system settings.")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
         }
     }
-    
+
     private var updatesSection: some View {
         Section("Updates") {
             HStack {
@@ -139,7 +128,7 @@ struct SettingsView: View {
             .disabled(!updateManager.canCheckForUpdates)
         }
     }
-    
+
     private var destructiveActionsSection: some View {
         Section("Destructive Actions") {
             HStack(spacing: 12) {
@@ -167,7 +156,7 @@ struct SettingsView: View {
             }
         }
     }
-    
+
     private func resetToDefaults() {
         settings.resetToDefaults()
         themeSettings.resetToDefaults()
