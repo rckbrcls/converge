@@ -15,27 +15,8 @@ struct NotificationSettingsSection: View {
             Toggle(isOn: $settings.notificationsEnabled) {
                 Label("Enable Notifications", systemImage: "bell.badge.fill")
             }
-            
-            if settings.notificationsEnabled {
-                Text("Notifications will appear when:")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                    .padding(.top, 4)
-
-                VStack(alignment: .leading, spacing: 4) {
-                    Label("Work session completes", systemImage: "clock.badge.checkmark")
-                    Label("Break session completes", systemImage: "cup.and.saucer.fill")
-                }
-                .font(.caption)
-                .foregroundStyle(.secondary)
-            } else {
-                Text("Notifications are disabled. You won't receive alerts when sessions complete.")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                    .padding(.top, 4)
-            }
         }
-        
+
         Section("Sound Settings") {
             Toggle(isOn: $settings.soundEnabled) {
                 Label("Enable Sound", systemImage: "speaker.wave.2.fill")
