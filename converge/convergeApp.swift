@@ -14,6 +14,8 @@ struct WindowManagerSetupView: View {
     @EnvironmentObject private var pomodoroSettings: PomodoroSettings
     @EnvironmentObject private var themeSettings: ThemeSettings
     @EnvironmentObject private var statisticsStore: StatisticsStore
+    @AppStorage("hasSeenWelcomeModal") private var hasSeenWelcomeModal = false
+    @State private var showWelcomeModal = false
 
     var body: some View {
         TabView {
@@ -47,7 +49,18 @@ struct WindowManagerSetupView: View {
             .padding(16)
         }
         .preferredColorScheme(themeSettings.currentColorScheme)
+        .sheet(isPresented: $showWelcomeModal) {
+            WelcomeModalView(onDismiss: {
+                hasSeenWelcomeModal = true
+                showWelcomeModal = false
+            })
+            .environmentObject(themeSettings)
+            .preferredColorScheme(themeSettings.currentColorScheme)
+        }
         .onAppear {
+            if !hasSeenWelcomeModal {
+                showWelcomeModal = true
+            }
             WindowManager.shared.setOpenWindowAction { id in
                 NSApp.activate(ignoringOtherApps: true)
                 
