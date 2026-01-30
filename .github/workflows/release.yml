@@ -83,6 +83,29 @@ jobs:
           /usr/libexec/PlistBuddy -c "Print :SUPublicEDKey" "$INFO_PLIST" > /dev/null
           /usr/libexec/PlistBuddy -c "Print :SUFeedURL" "$INFO_PLIST" > /dev/null
 
+      - name: Re-sign app bundle (adhoc)
+        run: |
+          set -euo pipefail
+          # Remove existing code signatures
+          find "$APP_PATH" -name "_CodeSignature" -type d -exec rm -rf {} + 2>/dev/null || true
+
+          # Re-sign all frameworks, bundles and executables with adhoc signature
+          # Sign nested components first (inside-out)
+          find "$APP_PATH/Contents/Frameworks" -name "*.framework" -o -name "*.app" -o -name "*.xpc" | while read -r bundle; do
+            if [ -d "$bundle" ]; then
+              codesign --force --deep --sign - "$bundle" 2>/dev/null || true
+            fi
+          done
+
+          # Sign the main app bundle
+          codesign --force --deep --sign - "$APP_PATH"
+
+          # Verify the signature is valid
+          codesign --verify --deep --strict "$APP_PATH" || {
+            echo "Warning: Deep verification failed, trying without strict"
+            codesign --verify "$APP_PATH"
+          }
+
       - name: Package ZIP
         run: |
           set -euo pipefail
