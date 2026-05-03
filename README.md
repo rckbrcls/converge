@@ -1,8 +1,23 @@
 # Converge
 
+> **Status:** Active
+> This project is currently maintained as a native macOS Pomodoro app.
+
 Pomodoro on Mac. Real focus.
 
 Converge is a native Pomodoro app for macOS built with SwiftUI. Focused on productivity and simplicity, it offers a complete Pomodoro timer with statistics, session history, notifications, and macOS menu bar integration.
+
+## Summary
+
+- [Features](#features)
+- [Goals](#goals)
+- [Installation](#installation)
+- [Requirements](#requirements)
+- [Updates](#updates)
+- [Open Source](#open-source)
+- [Contributing](#contributing)
+- [License](#license)
+- [Links](#links)
 
 ## Features
 
@@ -13,6 +28,13 @@ Converge is a native Pomodoro app for macOS built with SwiftUI. Focused on produ
 - **Notifications**: Alerts and sounds at the end of each phase
 - **Themes**: Light, dark, or follow system appearance
 - **Automatic Updates**: Stay up to date with automatic updates using Sparkle
+
+## Goals
+
+- Keep focus timing on the Mac, away from phone distractions.
+- Provide a simple Pomodoro workflow with enough statistics and history to build awareness.
+- Make the timer visible through native macOS surfaces such as the menu bar and compact windows.
+- Stay open source and easy to install/update.
 
 ## Installation
 
