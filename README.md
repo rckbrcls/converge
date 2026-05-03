@@ -9,15 +9,18 @@ Converge is a native Pomodoro app for macOS built with SwiftUI. Focused on produ
 
 ## Summary
 
-- [Features](#features)
-- [Goals](#goals)
-- [Installation](#installation)
-- [Requirements](#requirements)
-- [Updates](#updates)
-- [Open Source](#open-source)
-- [Contributing](#contributing)
-- [License](#license)
-- [Links](#links)
+- Native macOS Pomodoro app for focus timing, session history, statistics, notifications, themes, and menu bar visibility.
+- Solves desktop focus tracking with a simple SwiftUI timer workflow and Sparkle-based automatic updates.
+- Main stack: SwiftUI, macOS native APIs, Sparkle updates, GitHub releases, and install scripts.
+- Current status: active in this checkout, but verify against the primary Converge repository before release work.
+- Technical value: demonstrates a small native macOS product with distribution and update concerns documented beside the app.
+
+## Motivation
+
+- Keep focus timing on the Mac, away from phone distractions.
+- Provide a simple Pomodoro workflow with enough statistics and history to build awareness.
+- Make the timer visible through native macOS surfaces such as the menu bar and compact windows.
+- Stay open source and easy to install/update.
 
 ## Features
 
@@ -29,16 +32,9 @@ Converge is a native Pomodoro app for macOS built with SwiftUI. Focused on produ
 - **Themes**: Light, dark, or follow system appearance
 - **Automatic Updates**: Stay up to date with automatic updates using Sparkle
 
-## Goals
+## Getting Started
 
-- Keep focus timing on the Mac, away from phone distractions.
-- Provide a simple Pomodoro workflow with enough statistics and history to build awareness.
-- Make the timer visible through native macOS surfaces such as the menu bar and compact windows.
-- Stay open source and easy to install/update.
-
-## Installation
-
-### Install via curl
+### Installation
 
 Download and install the app:
 
@@ -52,8 +48,6 @@ Install a specific version:
 curl -fsSL https://converge-focus.vercel.app/install | bash -s -- --version 1.0.0
 ```
 
-### Manual Installation
-
 1. Download the ZIP file from [GitHub Releases](https://github.com/polterware/converge/releases)
 2. Extract the ZIP file
 3. Move `Converge.app` to your Applications folder
@@ -61,43 +55,38 @@ curl -fsSL https://converge-focus.vercel.app/install | bash -s -- --version 1.0.
 
 **Note**: If the app shows security warnings, right-click on the app and select "Open".
 
-## Requirements
+### Requirements
 
 - macOS 26.0 or higher
 
-## Updates
-
-### Automatic Updates
-
-Converge supports automatic updates via Sparkle inside the app.
-
-### Manual Updates
-
-Download the latest version from [GitHub Releases](https://github.com/polterware/converge/releases) and replace the app in your Applications folder.
-
-## Open Source
+## Technical Highlights
 
 Converge is an open source project. We believe in transparency, community collaboration, and making productivity tools accessible to everyone. Feel free to explore the code, report issues, or contribute improvements.
 
-## Contributing
+## Current Status
 
-Contributions are welcome! Whether you want to fix a bug, add a feature, improve documentation, or suggest ideas, your help makes Converge better for everyone.
-
-### How to Contribute
-
-1. Fork the repository
-2. Create a branch for your feature (`git checkout -b feature/your-feature`)
-3. Make your changes
-4. Commit your changes (`git commit -m 'Add your feature'`)
-5. Push to the branch (`git push origin feature/your-feature`)
-6. Open a Pull Request
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Links
+This checkout documents the native macOS app, installation flow, Sparkle update path, and GitHub release links. Verify against the primary Converge repository before release work.
 
 - **GitHub**: [https://github.com/polterware/converge](https://github.com/polterware/converge)
 - **Issues**: [https://github.com/polterware/converge/issues](https://github.com/polterware/converge/issues)
 - **Releases**: [https://github.com/polterware/converge/releases](https://github.com/polterware/converge/releases)
+
+## Roadmap
+
+**Automatic Updates**
+
+Converge supports automatic updates via Sparkle inside the app.
+
+**Manual Updates**
+
+Download the latest version from [GitHub Releases](https://github.com/polterware/converge/releases) and replace the app in your Applications folder.
+
+## Known Limitations
+
+- Requires macOS 26.0 or higher according to this README.
+- First launch may require using right-click > Open if macOS Gatekeeper shows a security warning.
+- Canonical release status should be confirmed before treating this mirror as the source of truth.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
