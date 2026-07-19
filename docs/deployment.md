@@ -1,120 +1,158 @@
 # Deployment
 
-Converge is distributed as a macOS app ZIP through GitHub Releases and updated through Sparkle appcast metadata.
+Converge is distributed as a **native macOS app**:
 
-## Release Ownership Check
+- ZIP on **GitHub Releases**
+- auto-updates via **Sparkle** + `appcast.xml`
+- feed hosted on **GitHub Pages**
+- optional install via `scripts/install.sh`
 
-Before publishing, verify the canonical repository owner.
-
-In this checkout, the Git remote points to:
-
-```text
-https://github.com/rckbrcls/converge.git
-```
-
-The release workflow, appcast URLs, installer, and existing README links reference:
+Shared playbook (Converge + Sparky):
 
 ```text
-polterware/converge
+../../../docs/macos-desktop-distribution.md
 ```
 
-Do not run release work until this mismatch is resolved.
+(from repo root: `../../docs/macos-desktop-distribution.md` when checked out under `codes/migration/converge`)
 
-## Release Workflow
+Absolute path on this machine:
 
-The release workflow lives at `.github/workflows/release.yml` and is manually triggered with `workflow_dispatch`.
+```text
+/Users/erickpatrickbarcelos/codes/docs/macos-desktop-distribution.md
+```
 
-It accepts an optional `version` input that overrides `CFBundleShortVersionString`.
+## Canonical ownership
 
-The workflow:
+| Item | Value |
+| --- | --- |
+| Local path | `/Users/erickpatrickbarcelos/codes/migration/converge` |
+| Git remote (this checkout) | `https://github.com/rckbrcls/converge.git` |
+| Appcast that responds in production | `https://rckbrcls.github.io/converge/appcast.xml` |
 
-1. Checks out the repository on a `macos-26` runner.
-2. Computes `CURRENT_PROJECT_VERSION` from `GITHUB_RUN_NUMBER`.
-3. Builds the `converge` Xcode scheme in Release configuration with code signing disabled.
-4. Verifies that `SUPublicEDKey` and `SUFeedURL` exist in the built app's `Info.plist`.
-5. Removes existing signatures and ad-hoc signs the app bundle.
-6. Packages the app as `Converge-macos-universal-v{shortVersion}.zip`.
-7. Resolves the minimum macOS version from the built app or Xcode build settings.
-8. Downloads Sparkle tools version 2.8.1.
-9. Signs the update ZIP with Sparkle EdDSA using `SPARKLE_EDDSA_PRIVATE_KEY`.
-10. Updates `appcast.xml` with `scripts/update_appcast.py`.
-11. Generates release notes from `CHANGELOG.md` when present, otherwise from recent Git commits.
-12. Commits and pushes the updated `appcast.xml`.
-13. Creates or replaces the GitHub Release for `v{shortVersion}`.
-14. Publishes `public/appcast.xml` through GitHub Pages.
+### Known drift to clean up
 
-## Release Inputs
+Some files still mention the old `polterware/converge` owner or `polterware.github.io` URLs:
 
-The workflow expects:
+- `.github/workflows/release.yml` (`REPO`, `APPCAST_URL`)
+- `converge/Info.plist` (`SUFeedURL`)
+- `converge/Services/UpdateManager.swift` (hardcoded feed)
+- `scripts/install.sh` (`REPO`)
+- README / older docs
 
-- Xcode project: `converge.xcodeproj`
-- Xcode scheme: `converge`
-- App bundle name: `converge.app`
-- Display name: `Converge`
-- Appcast path: `appcast.xml`
-- Appcast URL: `https://polterware.github.io/converge/appcast.xml`
-- Sparkle tools version: `2.8.1`
-- GitHub Actions secret: `SPARKLE_EDDSA_PRIVATE_KEY`
+**Before the next production release**, align every reference to:
 
-## Appcast
+| Field | Target |
+| --- | --- |
+| GitHub repo | `rckbrcls/converge` |
+| Appcast Pages | `https://rckbrcls.github.io/converge/appcast.xml` |
+| Release ZIP host | `https://github.com/rckbrcls/converge/releases/...` |
 
-`appcast.xml` is the Sparkle feed. Each release item includes:
+Do not ship a release while workflow `REPO`, `SUFeedURL`, and `UpdateManager` disagree.
 
-- Release title.
-- Publication date.
-- Minimum macOS version.
-- ZIP enclosure URL.
-- Build version.
-- Short version string.
-- Sparkle EdDSA signature.
-- ZIP length.
-- macOS platform marker.
+## Stack
 
-The app reads the feed through:
+| Piece | Path / value |
+| --- | --- |
+| Xcode project | `converge.xcodeproj` |
+| Scheme / product | `converge` → `converge.app` |
+| Sparkle | SPM + `Package.swift` pin |
+| Updater code | `converge/Services/UpdateManager.swift` |
+| Menu action | `Check for Updates…` in `converge/convergeApp.swift` (`AppCommands`) |
+| Plist keys | `converge/Info.plist` → `SUFeedURL`, `SUPublicEDKey` |
+| Appcast | `appcast.xml` |
+| Appcast updater | `scripts/update_appcast.py` |
+| Installer | `scripts/install.sh` |
+| Keys helper | `scripts/generate-sparkle-keys.sh` |
+| CI | `.github/workflows/release.yml` |
+| Runner | `macos-26` |
+| Secret | `SPARKLE_EDDSA_PRIVATE_KEY` |
 
-- `converge/Info.plist` key `SUFeedURL`.
-- `converge/Services/UpdateManager.swift`, which returns the same appcast URL through `SPUUpdaterDelegate`.
+## Release workflow
 
-Keep these values aligned.
+Trigger: GitHub Actions → **Release** → `workflow_dispatch` (optional `version` input overrides `CFBundleShortVersionString`).
 
-## Installer
+Pipeline:
 
-`scripts/install.sh` installs from GitHub Releases. It:
+1. Checkout on `macos-26`
+2. `CURRENT_PROJECT_VERSION = GITHUB_RUN_NUMBER`
+3. `xcodebuild` Release, signing disabled
+4. Verify `SUPublicEDKey` + `SUFeedURL` in built `Info.plist`
+5. Strip signatures and ad-hoc `codesign`
+6. Package `Converge-macos-universal-v{shortVersion}.zip` via `ditto`
+7. Download Sparkle tools (`2.8.1`)
+8. `sign_update` with `SPARKLE_EDDSA_PRIVATE_KEY`
+9. `scripts/update_appcast.py` updates `appcast.xml` (enclosure → GitHub Release ZIP URL)
+10. Generate release notes (`CHANGELOG.md` or `git log`)
+11. Commit + push `appcast.xml`
+12. Create/replace GitHub Release `v{shortVersion}` + upload ZIP
+13. Publish `appcast.xml` to GitHub Pages
 
-- Resolves either the latest release or a specific `v{version}` tag.
-- Selects a `.zip` asset, preferring universal builds.
-- Downloads and checks the asset size.
-- Extracts the archive with `ditto`.
-- Finds the first `.app` bundle.
-- Installs to `/Applications` or `$HOME/Applications`.
-- Removes `com.apple.quarantine` when `xattr` is available.
+## Install
 
-The public one-line install command currently points to:
+From a clone:
+
+```bash
+bash scripts/install.sh
+bash scripts/install.sh --version 1.0.0
+```
+
+Installer behavior:
+
+- Resolves latest or `v{version}` via GitHub API
+- Prefers universal `.zip`
+- Extracts with `ditto`, installs to `/Applications` or `~/Applications`
+- Clears `com.apple.quarantine` when possible
+
+Historical one-liner (may be stale — verify endpoint before publishing):
 
 ```bash
 curl -fsSL https://converge-focus.vercel.app/install | bash
 ```
 
-No source for that hosted endpoint was identified in this repository. Keep it aligned manually with `scripts/install.sh` and the canonical release repository.
+Prefer keeping the hosted install script byte-aligned with `scripts/install.sh` and `REPO=rckbrcls/converge`.
 
-## Signing and Notarization
+## In-app updates
 
-The current workflow performs ad-hoc code signing after building with signing disabled. It does not document or implement Apple Developer ID signing or notarization.
+- `UpdateManager` owns `SPUStandardUpdaterController`
+- Daily interval (`86400`)
+- Manual check from menu / settings / menu bar surfaces
+- Feed URL must match the live appcast (plist + delegate)
 
-Do not claim notarized distribution unless a notarization workflow is added and verified.
+## Signing reality
 
-## Pre-Release Checklist
+Current CI:
 
-- Confirm the canonical repository owner.
-- Confirm `SUFeedURL` in `converge/Info.plist`.
-- Confirm `UpdateManager` returns the same appcast URL.
-- Confirm `SUPublicEDKey` matches the private key stored in `SPARKLE_EDDSA_PRIVATE_KEY`.
-- Confirm the release ZIP name matches installer and appcast expectations.
-- Confirm the app target deployment target is intentional.
-- Confirm tests are healthy before relying on release confidence.
+- builds unsigned
+- re-signs **ad-hoc**
+- **no** Developer ID
+- **no** notarization
+
+Gatekeeper may block first launch until right-click → Open. Do not claim notarized distribution.
+
+## Pre-release checklist
+
+- [ ] `REPO` / remotes / Pages URLs all say `rckbrcls`
+- [ ] `SUFeedURL` == live appcast URL
+- [ ] `UpdateManager` feed string == `SUFeedURL`
+- [ ] `SUPublicEDKey` matches `SPARKLE_EDDSA_PRIVATE_KEY`
+- [ ] Secret present on GitHub Actions
+- [ ] Pages enabled (`build_type: workflow`)
+- [ ] Smoke-test previous build → Check for Updates after shipping
 
 ## Rollback
 
-No automated rollback process exists in the repository.
+No automated rollback.
 
-Manual rollback options are limited to replacing the GitHub Release asset and appcast entry with a known-good release, then waiting for Sparkle clients to receive the corrected feed.
+Manual options:
+
+1. Restore a known-good ZIP on the GitHub Release
+2. Fix/replace the matching `appcast.xml` item (signature + URL + versions)
+3. Redeploy Pages
+4. Wait for clients to refresh the feed
+
+## Related
+
+- [Architecture](architecture.md) — update flow
+- [Security](security.md) — keys, sandbox, installer trust
+- [Troubleshooting](troubleshooting.md) — update/install failures
+- Shared playbook: `/Users/erickpatrickbarcelos/codes/docs/macos-desktop-distribution.md`

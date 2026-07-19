@@ -6,7 +6,8 @@ Use these documents when working on this repository:
 
 - [Getting Started](getting-started.md): local setup, repository layout, dependency notes, scripts, and current test caveats.
 - [Architecture](architecture.md): app structure, state flow, persistence, notifications, windows, menu bar behavior, and update flow.
-- [Deployment](deployment.md): manual GitHub Actions release flow, ZIP packaging, Sparkle appcast updates, and release ownership checks.
+- [Deployment](deployment.md): manual GitHub Actions release flow, ZIP packaging, Sparkle appcast updates, installer, and ownership checks.
+- Shared macOS playbook (with Sparky): `/Users/erickpatrickbarcelos/codes/docs/macos-desktop-distribution.md`.
 - [Security](security.md): sandboxing, update signing, secrets, installer behavior, local data, and release risks.
 - [Troubleshooting](troubleshooting.md): practical investigation paths for updates, notifications, installer failures, statistics, windows, and tests.
 
